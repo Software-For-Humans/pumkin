@@ -14,13 +14,15 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             // Resolve where the bundled Next.js standalone server lives.
-            // In dev: relative to the workspace.
+            // In dev: relative to CARGO_MANIFEST_DIR (src-tauri/), go up two
+            // levels to the project root, then into web/.next/standalone/web.
             // In bundled release: under the app's resources directory.
             let web_dir = if cfg!(debug_assertions) {
-                // dev: ../web/.next/standalone/web relative to src-tauri/
-                std::env::current_dir()?
+                std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                     .parent()
-                    .unwrap()
+                    .ok_or("CARGO_MANIFEST_DIR has no parent")?
+                    .parent()
+                    .ok_or("desktop/ has no parent")?
                     .join("web")
                     .join(".next")
                     .join("standalone")
