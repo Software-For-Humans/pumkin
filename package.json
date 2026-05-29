@@ -1,6 +1,6 @@
 {
   "name": "agentkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Local-first platform for building and running AI agents against your own Ollama.",
   "type": "module",
   "engines": { "node": ">=22.5" },

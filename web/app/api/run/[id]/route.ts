@@ -1,11 +1,12 @@
 // web/app/api/run/[id]/route.ts — SSE endpoint streaming agent events to the client.
-// For v1, every requiresApproval tool is auto-approved if ?yes=1 is set; otherwise auto-denied.
-// Real interactive approval flows can land in a later iteration.
+// First event is always { type: "run_started", runId } so the client knows what
+// to POST against /api/approve/<runId> for approval decisions.
 import { NextRequest } from "next/server";
 import { store, tools, loadAgent } from "@/lib/server";
+import { startRun, endRun, awaitApproval } from "@/lib/runs";
 
-// Force this route to run on the Node runtime — the runtime spawns subprocesses (stdio MCP),
-// which the edge runtime cannot do.
+// Force the Node runtime — the agent loop spawns subprocesses (stdio MCP), which
+// the edge runtime can't do.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,6 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
   const { id } = await ctx.params;
   const url = new URL(req.url);
   const prompt = url.searchParams.get("prompt") ?? "";
-  const autoApprove = url.searchParams.get("yes") === "1";
-
   if (!prompt) return new Response("missing prompt", { status: 400 });
 
   const encoder = new TextEncoder();
@@ -23,6 +22,9 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     async start(controller) {
       const send = (data: unknown) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
 
+      const run = startRun();
+      send({ type: "run_started", runId: run.id });
+
       let loaded: Awaited<ReturnType<typeof loadAgent>> | null = null;
       try {
         loaded = await loadAgent(store(), id, {
@@ -30,8 +32,11 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
           overrides: {
             onEvent: (e) => send(e),
             approve: async ({ name, args }) => {
-              send({ type: "approval_request", name, args, decision: autoApprove });
-              return autoApprove;
+              const { callId, promise } = awaitApproval(run.id);
+              send({ type: "approval_request", callId, name, args });
+              const decision = await promise;
+              send({ type: "approval_decided", callId, decision });
+              return decision;
             },
           },
         });
@@ -40,6 +45,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
         send({ type: "error", message: err instanceof Error ? err.message : String(err) });
       } finally {
         if (loaded) await loaded.close().catch(() => {});
+        endRun(run.id);
         controller.close();
       }
     },
