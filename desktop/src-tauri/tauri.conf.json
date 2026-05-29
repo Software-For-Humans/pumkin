@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "agentkit",
+  "version": "0.0.1",
+  "identifier": "app.agentkit.desktop",
+  "build": {
+    "frontendDist": "../../web/.next/standalone/web",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "agentkit",
+        "width": 1200,
+        "height": 800,
+        "url": "http://127.0.0.1:3847",
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.png"
+    ],
+    "resources": {
+      "../../web/.next/standalone/web": "web"
+    },
+    "category": "DeveloperTool"
+  }
+}

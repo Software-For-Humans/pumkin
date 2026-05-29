@@ -1,0 +1,15 @@
+{
+  "name": "agentkit-desktop",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:web": "cd ../web && npm run build && node ../desktop/scripts/copy-static.mjs",
+    "tauri": "tauri",
+    "dev": "npm run build:web && tauri dev",
+    "build": "npm run build:web && tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}
