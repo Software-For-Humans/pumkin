@@ -139,27 +139,20 @@ fn kill_node_child(app_handle: &tauri::AppHandle) {
 }
 
 // Resolve the bundled Node binary. Tauri's externalBin places it alongside
-// the main app executable, with a name matching the build target triple.
+// the main app executable, renamed from `node-{target-triple}{ext}` (in the
+// source tree) to just `node{ext}` (in the installed bundle).
 fn resolve_bundled_node(_app: &tauri::App) -> Result<std::path::PathBuf, Box<dyn std::error::Error>> {
-    // The Node binary was placed in src-tauri/binaries/node-{target-triple}{ext}
-    // and Tauri copied it next to the app executable on bundle, stripped down to
-    // the basename (still target-triple-suffixed). Walk the exe directory and
-    // pick the matching one — this avoids hardcoding the target triple in code.
     let exe_dir = std::env::current_exe()?
         .parent()
         .ok_or("current_exe has no parent")?
         .to_path_buf();
 
-    let expected_ext = if cfg!(target_os = "windows") { ".exe" } else { "" };
+    let node_name = if cfg!(target_os = "windows") { "node.exe" } else { "node" };
+    let node_path = exe_dir.join(node_name);
 
-    // Look for any file matching `node-*` in the same directory.
-    for entry in std::fs::read_dir(&exe_dir)? {
-        let path = entry?.path();
-        let Some(name) = path.file_name().and_then(|s| s.to_str()) else { continue };
-        if name.starts_with("node-") && name.ends_with(expected_ext) {
-            return Ok(path);
-        }
+    if !node_path.exists() {
+        return Err(format!("bundled node binary not found at {:?}", node_path).into());
     }
 
-    Err(format!("bundled node binary not found in {:?}", exe_dir).into())
+    Ok(node_path)
 }
