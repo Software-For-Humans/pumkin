@@ -194,8 +194,8 @@ async function cmdRun(agentId: string, prompt: string) {
     },
   });
   try {
-    const out = await agent.run(prompt);
-    console.log("\nFINAL:\n" + out);
+    const { output } = await agent.run(prompt);
+    console.log("\nFINAL:\n" + output);
   } finally {
     await close();
     store.close();

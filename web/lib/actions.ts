@@ -61,3 +61,20 @@ export async function deleteRunAction(id: string) {
   store().deleteRun(id);
   revalidatePath("/runs");
 }
+
+export async function createThreadAction(agentId: string) {
+  const agent = store().getAgent(agentId);
+  if (!agent) throw new Error("agent not found");
+  const thread = store().createThread({
+    agentId: agent.id,
+    agentName: agent.name,
+    title: "New conversation",
+  });
+  redirect(`/threads/${thread.id}`);
+}
+
+export async function deleteThreadAction(id: string) {
+  store().deleteThread(id);
+  revalidatePath("/threads");
+  redirect("/threads");
+}

@@ -39,11 +39,22 @@ export type RunRow = {
   id: string;
   agentId: string;
   agentName: string;
+  threadId: string | null;
   prompt: string;
   events: unknown[];
   status: RunStatus;
   startedAt: string;
   endedAt: string | null;
+};
+
+export type ThreadRow = {
+  id: string;
+  agentId: string;
+  agentName: string;
+  title: string;
+  messages: unknown[]; // Message[] from agent.ts; kept as unknown[] here to avoid coupling
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type Store = ReturnType<typeof openStore>;
@@ -152,16 +163,17 @@ export function openStore(path: string) {
     },
 
     // ---- runs ----
-    startRun(input: { id: string; agentId: string; agentName: string; prompt: string }): RunRow {
+    startRun(input: { id: string; agentId: string; agentName: string; prompt: string; threadId?: string | null }): RunRow {
       const startedAt = new Date().toISOString();
       db.prepare(
-        `INSERT INTO runs (id, agent_id, agent_name, prompt, events, status, started_at)
-         VALUES (?, ?, ?, ?, '[]', 'running', ?)`,
-      ).run(input.id, input.agentId, input.agentName, input.prompt, startedAt);
+        `INSERT INTO runs (id, agent_id, agent_name, thread_id, prompt, events, status, started_at)
+         VALUES (?, ?, ?, ?, ?, '[]', 'running', ?)`,
+      ).run(input.id, input.agentId, input.agentName, input.threadId ?? null, input.prompt, startedAt);
       return {
         id: input.id,
         agentId: input.agentId,
         agentName: input.agentName,
+        threadId: input.threadId ?? null,
         prompt: input.prompt,
         events: [],
         status: "running",
@@ -172,8 +184,6 @@ export function openStore(path: string) {
 
     finishRun(id: string, status: RunStatus, events: unknown[]): void {
       const endedAt = new Date().toISOString();
-      // Truncate individual event values that exceed 32KB so a single bad
-      // tool_result can't blow up the DB.
       const safe = events.map(truncateLargeFields);
       db.prepare(
         `UPDATE runs SET status = ?, ended_at = ?, events = ? WHERE id = ?`,
@@ -192,8 +202,66 @@ export function openStore(path: string) {
       return rows.map(rowToRun);
     },
 
+    listRunsForThread(threadId: string): RunRow[] {
+      const rows = db
+        .prepare(`SELECT * FROM runs WHERE thread_id = ? ORDER BY started_at ASC`)
+        .all(threadId) as Record<string, unknown>[];
+      return rows.map(rowToRun);
+    },
+
     deleteRun(id: string): boolean {
       const res = db.prepare(`DELETE FROM runs WHERE id = ?`).run(id);
+      return res.changes > 0;
+    },
+
+    // ---- threads ----
+    createThread(input: { agentId: string; agentName: string; title: string }): ThreadRow {
+      const id = randomUUID();
+      const now = new Date().toISOString();
+      db.prepare(
+        `INSERT INTO threads (id, agent_id, agent_name, title, messages, created_at, updated_at)
+         VALUES (?, ?, ?, ?, '[]', ?, ?)`,
+      ).run(id, input.agentId, input.agentName, input.title, now, now);
+      return {
+        id,
+        agentId: input.agentId,
+        agentName: input.agentName,
+        title: input.title,
+        messages: [],
+        createdAt: now,
+        updatedAt: now,
+      };
+    },
+
+    getThread(id: string): ThreadRow | null {
+      const row = db.prepare(`SELECT * FROM threads WHERE id = ?`).get(id) as Record<string, unknown> | undefined;
+      return row ? rowToThread(row) : null;
+    },
+
+    listThreads(limit = 100): ThreadRow[] {
+      const rows = db
+        .prepare(`SELECT * FROM threads ORDER BY updated_at DESC LIMIT ?`)
+        .all(limit) as Record<string, unknown>[];
+      return rows.map(rowToThread);
+    },
+
+    updateThreadMessages(id: string, messages: unknown[]): void {
+      db.prepare(`UPDATE threads SET messages = ?, updated_at = ? WHERE id = ?`).run(
+        JSON.stringify(messages),
+        new Date().toISOString(),
+        id,
+      );
+    },
+
+    setThreadTitle(id: string, title: string): void {
+      db.prepare(`UPDATE threads SET title = ? WHERE id = ?`).run(title, id);
+    },
+
+    deleteThread(id: string): boolean {
+      // Cascade: detach all runs from this thread first (don't delete the runs;
+      // they're still useful as audit history).
+      db.prepare(`UPDATE runs SET thread_id = NULL WHERE thread_id = ?`).run(id);
+      const res = db.prepare(`DELETE FROM threads WHERE id = ?`).run(id);
       return res.changes > 0;
     },
 
@@ -253,6 +321,7 @@ function applySchema(db: DatabaseSync) {
       id TEXT PRIMARY KEY,
       agent_id TEXT NOT NULL,
       agent_name TEXT NOT NULL,
+      thread_id TEXT,
       prompt TEXT NOT NULL,
       events TEXT NOT NULL DEFAULT '[]',
       status TEXT NOT NULL CHECK (status IN ('running','done','error')),
@@ -262,7 +331,27 @@ function applySchema(db: DatabaseSync) {
 
     CREATE INDEX IF NOT EXISTS runs_started_at_idx ON runs (started_at DESC);
     CREATE INDEX IF NOT EXISTS runs_agent_id_idx ON runs (agent_id);
+    CREATE INDEX IF NOT EXISTS runs_thread_id_idx ON runs (thread_id);
+
+    CREATE TABLE IF NOT EXISTS threads (
+      id TEXT PRIMARY KEY,
+      agent_id TEXT NOT NULL,
+      agent_name TEXT NOT NULL,
+      title TEXT NOT NULL,
+      messages TEXT NOT NULL DEFAULT '[]',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS threads_updated_at_idx ON threads (updated_at DESC);
   `);
+
+  // Idempotent migrations for older DBs created before threads existed.
+  const runsCols = db.prepare("PRAGMA table_info(runs)").all() as Array<{ name: string }>;
+  if (!runsCols.some((c) => c.name === "thread_id")) {
+    db.exec("ALTER TABLE runs ADD COLUMN thread_id TEXT");
+    db.exec("CREATE INDEX IF NOT EXISTS runs_thread_id_idx ON runs (thread_id)");
+  }
 }
 
 function rowToAgent(r: Record<string, unknown>): AgentRow {
@@ -298,11 +387,24 @@ function rowToRun(r: Record<string, unknown>): RunRow {
     id: r.id as string,
     agentId: r.agent_id as string,
     agentName: r.agent_name as string,
+    threadId: (r.thread_id as string | null) ?? null,
     prompt: r.prompt as string,
     events: JSON.parse((r.events as string) || "[]"),
     status: r.status as RunStatus,
     startedAt: r.started_at as string,
     endedAt: (r.ended_at as string | null) ?? null,
+  };
+}
+
+function rowToThread(r: Record<string, unknown>): ThreadRow {
+  return {
+    id: r.id as string,
+    agentId: r.agent_id as string,
+    agentName: r.agent_name as string,
+    title: r.title as string,
+    messages: JSON.parse((r.messages as string) || "[]"),
+    createdAt: r.created_at as string,
+    updatedAt: r.updated_at as string,
   };
 }
 

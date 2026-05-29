@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { store } from "@/lib/server";
+import { createThreadAction } from "@/lib/actions";
 import RunConsole from "@/components/RunConsole";
 
 export const dynamic = "force-dynamic";
@@ -15,9 +16,16 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-bold">{agent.name}</h1>
-        <div className="text-sm text-neutral-500 mt-1">{agent.model}</div>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold">{agent.name}</h1>
+          <div className="text-sm text-neutral-500 mt-1">{agent.model}</div>
+        </div>
+        <form action={createThreadAction.bind(null, agent.id)}>
+          <button className="px-3 py-1.5 bg-neutral-100 text-neutral-900 rounded text-sm font-semibold hover:bg-white">
+            + new conversation
+          </button>
+        </form>
       </div>
 
       <details className="mb-6 text-sm">
@@ -31,6 +39,10 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
         </dl>
       </details>
 
+      <div className="mb-3">
+        <h2 className="text-sm font-semibold text-neutral-300">one-shot run</h2>
+        <p className="text-xs text-neutral-500">No conversation history. Use &ldquo;new conversation&rdquo; above for multi-turn chat.</p>
+      </div>
       <RunConsole agentId={agent.id} />
     </div>
   );

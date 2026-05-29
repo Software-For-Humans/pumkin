@@ -42,5 +42,5 @@ const agent = new Agent({
 });
 
 const prompt = process.argv[2] ?? "What time is it? Then read package.json and summarize it in one line.";
-const out = await agent.run(prompt);
-console.log("\nFINAL:\n" + out);
+const { output } = await agent.run(prompt);
+console.log("\nFINAL:\n" + output);

@@ -36,12 +36,13 @@ export type AgentOptions = {
 };
 
 type ToolCall = { function: { name: string; arguments: Record<string, any> | string } };
-type Message = {
+export type Message = {
   role: "system" | "user" | "assistant" | "tool";
   content: string;
   tool_calls?: ToolCall[];
   tool_name?: string;
 };
+export type { ToolCall };
 
 export class Agent {
   private ollamaUrl: string;
@@ -66,9 +67,10 @@ export class Agent {
     this.tools = new Map((o.tools ?? []).map((t) => [t.name, t]));
   }
 
-  async run(userInput: string): Promise<string> {
+  async run(userInput: string, history: Message[] = []): Promise<{ output: string; messages: Message[] }> {
     const messages: Message[] = [
       { role: "system", content: this.systemPrompt },
+      ...history,
       { role: "user", content: userInput },
     ];
 
@@ -79,8 +81,12 @@ export class Agent {
 
       // No tool calls => the model has produced its final answer.
       if (toolCalls.length === 0) {
-        this.emit({ type: "done", output: msg.content ?? "" });
-        return msg.content ?? "";
+        messages.push({ role: "assistant", content: msg.content ?? "" });
+        const output = msg.content ?? "";
+        this.emit({ type: "done", output });
+        // Drop the system prompt from the returned history — it's owned by the
+        // agent config, not the conversation, and may change between turns.
+        return { output, messages: messages.slice(1) };
       }
 
       // Keep the assistant turn that requested the tools in history.
@@ -131,7 +137,7 @@ export class Agent {
 
     const out = "Reached max steps without a final answer.";
     this.emit({ type: "done", output: out });
-    return out;
+    return { output: out, messages: messages.slice(1) };
   }
 
   private async chat(messages: Message[]): Promise<{ content: string; tool_calls?: ToolCall[] }> {

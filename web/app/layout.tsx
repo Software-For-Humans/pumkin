@@ -11,6 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="font-bold text-neutral-100">agentkit</Link>
           <nav className="flex gap-4 text-sm text-neutral-400">
             <Link href="/" className="hover:text-neutral-100">agents</Link>
+            <Link href="/threads" className="hover:text-neutral-100">threads</Link>
             <Link href="/mcp" className="hover:text-neutral-100">mcp servers</Link>
             <Link href="/runs" className="hover:text-neutral-100">runs</Link>
           </nav>
