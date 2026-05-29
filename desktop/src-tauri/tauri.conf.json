@@ -33,7 +33,7 @@
       "icons/icon.ico"
     ],
     "resources": {
-      "../../web/.next/standalone/web": "web"
+      "../../web/.next/standalone": "web"
     },
     "category": "DeveloperTool"
   }

@@ -15,7 +15,9 @@ pub fn run() {
         .setup(|app| {
             // Resolve where the bundled Next.js standalone server lives.
             // In dev: relative to CARGO_MANIFEST_DIR (src-tauri/), go up two
-            // levels to the project root, then into web/.next/standalone/web.
+            // levels to the project root, then into web/.next/standalone/.
+            // (With outputFileTracingRoot set in next.config.mjs, the standalone
+            // output is flat — server.js sits at the root of standalone/.)
             // In bundled release: under the app's resources directory.
             let web_dir = if cfg!(debug_assertions) {
                 std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -26,7 +28,6 @@ pub fn run() {
                     .join("web")
                     .join(".next")
                     .join("standalone")
-                    .join("web")
             } else {
                 app.path()
                     .resource_dir()?

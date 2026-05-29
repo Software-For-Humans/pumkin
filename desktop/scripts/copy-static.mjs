@@ -6,7 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const webDir = resolve(__dirname, "..", "..", "web");
-const standaloneDir = resolve(webDir, ".next", "standalone", "web");
+// With outputFileTracingRoot: __dirname in next.config.mjs, the standalone
+// server.js lives at .next/standalone/server.js (no intermediate subdir).
+const standaloneDir = resolve(webDir, ".next", "standalone");
 
 async function exists(p) {
   try {
