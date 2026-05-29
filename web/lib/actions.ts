@@ -56,3 +56,8 @@ export async function deleteMcpServerAction(id: string) {
   store().deleteMcpServer(id);
   revalidatePath("/mcp");
 }
+
+export async function deleteRunAction(id: string) {
+  store().deleteRun(id);
+  revalidatePath("/runs");
+}

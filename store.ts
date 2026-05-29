@@ -33,6 +33,19 @@ export type McpServerRow = {
 
 export type McpServerInput = Omit<McpServerRow, "id" | "createdAt">;
 
+export type RunStatus = "running" | "done" | "error";
+
+export type RunRow = {
+  id: string;
+  agentId: string;
+  agentName: string;
+  prompt: string;
+  events: unknown[];
+  status: RunStatus;
+  startedAt: string;
+  endedAt: string | null;
+};
+
 export type Store = ReturnType<typeof openStore>;
 
 export function openStore(path: string) {
@@ -138,6 +151,52 @@ export function openStore(path: string) {
       return res.changes > 0;
     },
 
+    // ---- runs ----
+    startRun(input: { id: string; agentId: string; agentName: string; prompt: string }): RunRow {
+      const startedAt = new Date().toISOString();
+      db.prepare(
+        `INSERT INTO runs (id, agent_id, agent_name, prompt, events, status, started_at)
+         VALUES (?, ?, ?, ?, '[]', 'running', ?)`,
+      ).run(input.id, input.agentId, input.agentName, input.prompt, startedAt);
+      return {
+        id: input.id,
+        agentId: input.agentId,
+        agentName: input.agentName,
+        prompt: input.prompt,
+        events: [],
+        status: "running",
+        startedAt,
+        endedAt: null,
+      };
+    },
+
+    finishRun(id: string, status: RunStatus, events: unknown[]): void {
+      const endedAt = new Date().toISOString();
+      // Truncate individual event values that exceed 32KB so a single bad
+      // tool_result can't blow up the DB.
+      const safe = events.map(truncateLargeFields);
+      db.prepare(
+        `UPDATE runs SET status = ?, ended_at = ?, events = ? WHERE id = ?`,
+      ).run(status, endedAt, JSON.stringify(safe), id);
+    },
+
+    getRun(id: string): RunRow | null {
+      const row = db.prepare(`SELECT * FROM runs WHERE id = ?`).get(id) as Record<string, unknown> | undefined;
+      return row ? rowToRun(row) : null;
+    },
+
+    listRuns(limit = 100): RunRow[] {
+      const rows = db
+        .prepare(`SELECT * FROM runs ORDER BY started_at DESC LIMIT ?`)
+        .all(limit) as Record<string, unknown>[];
+      return rows.map(rowToRun);
+    },
+
+    deleteRun(id: string): boolean {
+      const res = db.prepare(`DELETE FROM runs WHERE id = ?`).run(id);
+      return res.changes > 0;
+    },
+
     // ---- helper: turn stored row into the runtime config mcp.ts expects ----
     toMcpConfig(row: McpServerRow): McpServerConfig {
       if (row.transport === "stdio") {
@@ -189,6 +248,20 @@ function applySchema(db: DatabaseSync) {
         (transport = 'http'  AND url IS NOT NULL)
       )
     );
+
+    CREATE TABLE IF NOT EXISTS runs (
+      id TEXT PRIMARY KEY,
+      agent_id TEXT NOT NULL,
+      agent_name TEXT NOT NULL,
+      prompt TEXT NOT NULL,
+      events TEXT NOT NULL DEFAULT '[]',
+      status TEXT NOT NULL CHECK (status IN ('running','done','error')),
+      started_at TEXT NOT NULL,
+      ended_at TEXT
+    );
+
+    CREATE INDEX IF NOT EXISTS runs_started_at_idx ON runs (started_at DESC);
+    CREATE INDEX IF NOT EXISTS runs_agent_id_idx ON runs (agent_id);
   `);
 }
 
@@ -218,4 +291,39 @@ function rowToMcpServer(r: Record<string, unknown>): McpServerRow {
     requiresApproval: Boolean(Number(r.requires_approval)),
     createdAt: r.created_at as string,
   };
+}
+
+function rowToRun(r: Record<string, unknown>): RunRow {
+  return {
+    id: r.id as string,
+    agentId: r.agent_id as string,
+    agentName: r.agent_name as string,
+    prompt: r.prompt as string,
+    events: JSON.parse((r.events as string) || "[]"),
+    status: r.status as RunStatus,
+    startedAt: r.started_at as string,
+    endedAt: (r.ended_at as string | null) ?? null,
+  };
+}
+
+// Cap any string field within an event at 32KB to keep stored runs bounded.
+const MAX_FIELD = 32 * 1024;
+function truncateLargeFields(ev: unknown): unknown {
+  if (ev === null || typeof ev !== "object") return ev;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(ev as Record<string, unknown>)) {
+    if (typeof v === "string" && v.length > MAX_FIELD) {
+      out[k] = v.slice(0, MAX_FIELD) + `…[truncated ${v.length - MAX_FIELD} chars]`;
+    } else if (v && typeof v === "object") {
+      const s = JSON.stringify(v);
+      if (s.length > MAX_FIELD) {
+        out[k] = s.slice(0, MAX_FIELD) + `…[truncated ${s.length - MAX_FIELD} chars]`;
+      } else {
+        out[k] = v;
+      }
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
 }
