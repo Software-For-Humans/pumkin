@@ -1,11 +1,13 @@
 import { store, tools } from "@/lib/server";
 import { createAgentAction } from "@/lib/actions";
+import { listOllamaModels, expectsReliableToolCalls } from "@/lib/ollama";
 
 export const dynamic = "force-dynamic";
 
-export default function NewAgentPage() {
+export default async function NewAgentPage() {
   const mcpServers = store().listMcpServers();
   const builtIns = Object.values(tools());
+  const modelsResult = await listOllamaModels();
 
   return (
     <div>
@@ -14,9 +16,37 @@ export default function NewAgentPage() {
         <Field label="Name">
           <input name="name" required className="input" placeholder="time-bot" />
         </Field>
-        <Field label="Model" hint="An Ollama model that supports tool calling (e.g. qwen3:8b, llama3.1:8b).">
-          <input name="model" required className="input" placeholder="qwen3:8b" />
+
+        <Field
+          label="Model"
+          hint={
+            modelsResult.ok
+              ? "Models with a ⚠ may have unreliable tool calling at this size."
+              : `Could not reach Ollama (${modelsResult.error}). Enter a model name manually.`
+          }
+        >
+          {modelsResult.ok && modelsResult.models.length > 0 ? (
+            <select name="model" required className="input" defaultValue="">
+              <option value="" disabled>
+                Select a model…
+              </option>
+              {modelsResult.models.map((m) => {
+                const ok = expectsReliableToolCalls(m);
+                const sizeLabel = m.parameterSize ? ` · ${m.parameterSize}` : "";
+                return (
+                  <option key={m.name} value={m.name}>
+                    {ok ? "" : "⚠ "}
+                    {m.name}
+                    {sizeLabel}
+                  </option>
+                );
+              })}
+            </select>
+          ) : (
+            <input name="model" required className="input" placeholder="qwen3:8b" />
+          )}
         </Field>
+
         <Field label="System prompt">
           <textarea name="systemPrompt" required rows={4} className="input" placeholder="You are a concise assistant." />
         </Field>
