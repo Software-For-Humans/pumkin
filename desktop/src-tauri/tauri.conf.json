@@ -35,6 +35,9 @@
     "resources": {
       "../../web/.next/standalone": "web"
     },
+    "externalBin": [
+      "binaries/node"
+    ],
     "category": "DeveloperTool"
   }
 }

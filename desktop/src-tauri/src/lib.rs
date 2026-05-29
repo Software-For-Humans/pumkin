@@ -51,7 +51,16 @@ pub fn run() {
                 .into());
             }
 
-            let child = Command::new("node")
+            // In dev: use the system `node` (faster iteration; assumes Node is on PATH).
+            // In release: use the Node binary we bundled via externalBin, resolved alongside the app exe.
+            let node_cmd = if cfg!(debug_assertions) {
+                std::path::PathBuf::from("node")
+            } else {
+                resolve_bundled_node(app)?
+            };
+            eprintln!("[agentkit] node binary: {:?}", node_cmd);
+
+            let child = Command::new(&node_cmd)
                 .current_dir(&web_dir)
                 .env("AGENTKIT_DB", &db_path)
                 .env("PORT", PORT.to_string())
@@ -62,8 +71,14 @@ pub fn run() {
                 .spawn()
                 .map_err(|e| {
                     format!(
-                        "Failed to spawn `node`: {}. Ensure Node.js 22.5+ is installed and on PATH.",
-                        e
+                        "Failed to spawn `node` at {:?}: {}. {}",
+                        node_cmd,
+                        e,
+                        if cfg!(debug_assertions) {
+                            "Ensure Node.js 22.5+ is installed and on PATH."
+                        } else {
+                            "Bundled Node binary missing — this is a packaging bug."
+                        }
                     )
                 })?;
 
@@ -121,4 +136,30 @@ fn kill_node_child(app_handle: &tauri::AppHandle) {
             }
         }
     }
+}
+
+// Resolve the bundled Node binary. Tauri's externalBin places it alongside
+// the main app executable, with a name matching the build target triple.
+fn resolve_bundled_node(_app: &tauri::App) -> Result<std::path::PathBuf, Box<dyn std::error::Error>> {
+    // The Node binary was placed in src-tauri/binaries/node-{target-triple}{ext}
+    // and Tauri copied it next to the app executable on bundle, stripped down to
+    // the basename (still target-triple-suffixed). Walk the exe directory and
+    // pick the matching one — this avoids hardcoding the target triple in code.
+    let exe_dir = std::env::current_exe()?
+        .parent()
+        .ok_or("current_exe has no parent")?
+        .to_path_buf();
+
+    let expected_ext = if cfg!(target_os = "windows") { ".exe" } else { "" };
+
+    // Look for any file matching `node-*` in the same directory.
+    for entry in std::fs::read_dir(&exe_dir)? {
+        let path = entry?.path();
+        let Some(name) = path.file_name().and_then(|s| s.to_str()) else { continue };
+        if name.starts_with("node-") && name.ends_with(expected_ext) {
+            return Ok(path);
+        }
+    }
+
+    Err(format!("bundled node binary not found in {:?}", exe_dir).into())
 }

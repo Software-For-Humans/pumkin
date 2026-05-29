@@ -2,3 +2,4 @@ node_modules/
 target/
 gen/
 Cargo.lock.bak
+src-tauri/binaries/node-*

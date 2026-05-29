@@ -1,0 +1,3 @@
+Bundled Node binaries land here via `npm run setup:node`.
+Each platform's binary (~30-40MB) is downloaded on demand from nodejs.org.
+Not source-controlled; .gitignore'd at the desktop/ level.
