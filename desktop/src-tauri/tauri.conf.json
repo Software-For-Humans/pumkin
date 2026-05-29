@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "identifier": "app.agentkit.desktop",
   "build": {
-    "frontendDist": "../../web/.next/standalone",
+    "frontendDist": "./dist-placeholder",
     "beforeDevCommand": "",
     "beforeBuildCommand": ""
   },
