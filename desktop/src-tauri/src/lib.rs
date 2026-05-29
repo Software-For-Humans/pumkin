@@ -1,5 +1,8 @@
+use std::fs::{File, OpenOptions};
+use std::io::Write;
+use std::path::PathBuf;
 use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use std::time::{Duration, Instant};
 use tauri::{Manager, RunEvent, WindowEvent};
 
@@ -9,15 +12,58 @@ const STARTUP_TIMEOUT: Duration = Duration::from_secs(30);
 // Hold the child Node process so we can kill it on app exit.
 struct NodeChild(Mutex<Option<Child>>);
 
+// Global handle to the startup log file (writes from any thread go here).
+static LOG_FILE: OnceLock<Mutex<File>> = OnceLock::new();
+
+fn log_path() -> PathBuf {
+    // Prefer LOCALAPPDATA on Windows; fall back to temp_dir if env var missing.
+    if let Some(local) = std::env::var_os("LOCALAPPDATA") {
+        let dir = PathBuf::from(local).join("agentkit");
+        let _ = std::fs::create_dir_all(&dir);
+        return dir.join("startup.log");
+    }
+    if let Some(home) = std::env::var_os("HOME") {
+        let dir = PathBuf::from(home).join(".agentkit");
+        let _ = std::fs::create_dir_all(&dir);
+        return dir.join("startup.log");
+    }
+    std::env::temp_dir().join("agentkit-startup.log")
+}
+
+fn init_log() {
+    let path = log_path();
+    if let Ok(file) = OpenOptions::new().create(true).write(true).truncate(true).open(&path) {
+        let _ = LOG_FILE.set(Mutex::new(file));
+    }
+}
+
+fn log_line(s: &str) {
+    eprintln!("{}", s);
+    if let Some(lock) = LOG_FILE.get() {
+        if let Ok(mut f) = lock.lock() {
+            let _ = writeln!(f, "{}", s);
+            let _ = f.flush();
+        }
+    }
+}
+
+// Convenience: write a formatted line to the log.
+macro_rules! logf {
+    ($($t:tt)*) => { log_line(&format!($($t)*)) };
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    init_log();
+    logf!("[agentkit] === startup ===");
+    logf!("[agentkit] current_exe = {:?}", std::env::current_exe().ok());
+    logf!("[agentkit] cwd = {:?}", std::env::current_dir().ok());
+
+    let build_result = tauri::Builder::default()
         .setup(|app| {
             // Resolve where the bundled Next.js standalone server lives.
             // In dev: relative to CARGO_MANIFEST_DIR (src-tauri/), go up two
             // levels to the project root, then into web/.next/standalone/.
-            // (With outputFileTracingRoot set in next.config.mjs, the standalone
-            // output is flat — server.js sits at the root of standalone/.)
             // In bundled release: under the app's resources directory.
             let web_dir = if cfg!(debug_assertions) {
                 std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -29,36 +75,55 @@ pub fn run() {
                     .join(".next")
                     .join("standalone")
             } else {
-                app.path()
-                    .resource_dir()?
-                    .join("web")
+                app.path().resource_dir()?.join("web")
             };
+            logf!("[agentkit] web_dir = {:?}", web_dir);
+            logf!("[agentkit] web_dir exists = {}", web_dir.exists());
 
             // Per-OS app data dir for the SQLite database.
             let data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&data_dir)?;
             let db_path = data_dir.join("agentkit.db");
-
-            eprintln!("[agentkit] starting Next.js server in {:?}", web_dir);
-            eprintln!("[agentkit] db at {:?}", db_path);
+            logf!("[agentkit] db_path = {:?}", db_path);
 
             let server_js = web_dir.join("server.js");
+            logf!("[agentkit] server_js = {:?}", server_js);
+            logf!("[agentkit] server_js exists = {}", server_js.exists());
             if !server_js.exists() {
-                return Err(format!(
+                let msg = format!(
                     "Next.js standalone server.js not found at {:?}. Did you run `npm run build:web` first?",
                     server_js
-                )
-                .into());
+                );
+                logf!("[agentkit] ERROR: {}", msg);
+                return Err(msg.into());
             }
 
-            // In dev: use the system `node` (faster iteration; assumes Node is on PATH).
-            // In release: use the Node binary we bundled via externalBin, resolved alongside the app exe.
+            // In dev: use system `node`. In release: bundled Node next to the exe.
             let node_cmd = if cfg!(debug_assertions) {
                 std::path::PathBuf::from("node")
             } else {
-                resolve_bundled_node(app)?
+                match resolve_bundled_node(app) {
+                    Ok(p) => p,
+                    Err(e) => {
+                        logf!("[agentkit] ERROR resolving bundled node: {}", e);
+                        return Err(e);
+                    }
+                }
             };
-            eprintln!("[agentkit] node binary: {:?}", node_cmd);
+            logf!("[agentkit] node_cmd = {:?}", node_cmd);
+            logf!("[agentkit] node_cmd exists = {}", node_cmd.exists());
+
+            // Redirect Node stdout/stderr to log files so we can debug Node-side failures.
+            let log_dir = log_path().parent().map(|p| p.to_path_buf()).unwrap_or_else(std::env::temp_dir);
+            let node_stdout_path = log_dir.join("node-stdout.log");
+            let node_stderr_path = log_dir.join("node-stderr.log");
+            logf!("[agentkit] node stdout -> {:?}", node_stdout_path);
+            logf!("[agentkit] node stderr -> {:?}", node_stderr_path);
+
+            let node_stdout = File::create(&node_stdout_path)
+                .map_err(|e| format!("create stdout log: {}", e))?;
+            let node_stderr = File::create(&node_stderr_path)
+                .map_err(|e| format!("create stderr log: {}", e))?;
 
             let child = Command::new(&node_cmd)
                 .current_dir(&web_dir)
@@ -66,38 +131,40 @@ pub fn run() {
                 .env("PORT", PORT.to_string())
                 .env("HOSTNAME", "127.0.0.1")
                 .arg(&server_js)
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit())
-                .spawn()
-                .map_err(|e| {
-                    format!(
-                        "Failed to spawn `node` at {:?}: {}. {}",
-                        node_cmd,
-                        e,
-                        if cfg!(debug_assertions) {
-                            "Ensure Node.js 22.5+ is installed and on PATH."
-                        } else {
-                            "Bundled Node binary missing — this is a packaging bug."
-                        }
-                    )
-                })?;
+                .stdout(Stdio::from(node_stdout))
+                .stderr(Stdio::from(node_stderr))
+                .spawn();
+
+            let child = match child {
+                Ok(c) => {
+                    logf!("[agentkit] node spawned, pid = {}", c.id());
+                    c
+                }
+                Err(e) => {
+                    let msg = format!(
+                        "Failed to spawn node at {:?}: {} ({:?})",
+                        node_cmd, e, e.kind()
+                    );
+                    logf!("[agentkit] ERROR: {}", msg);
+                    return Err(msg.into());
+                }
+            };
 
             app.manage(NodeChild(Mutex::new(Some(child))));
 
-            // Wait for the server to start responding before showing the window,
-            // so the user doesn't see a "connection refused" flash.
+            // Poll for server readiness in a background thread.
             let app_handle = app.handle().clone();
             std::thread::spawn(move || {
                 let started = Instant::now();
-                let url = format!("http://127.0.0.1:{}/", PORT);
                 loop {
                     if started.elapsed() > STARTUP_TIMEOUT {
-                        eprintln!("[agentkit] server did not become ready within {:?}", STARTUP_TIMEOUT);
+                        logf!("[agentkit] ERROR: server did not become ready within {:?}", STARTUP_TIMEOUT);
+                        logf!("[agentkit] check node-stderr.log and node-stdout.log for details");
                         break;
                     }
                     match std::net::TcpStream::connect(("127.0.0.1", PORT)) {
                         Ok(_) => {
-                            eprintln!("[agentkit] server ready, showing window");
+                            logf!("[agentkit] server ready in {:?}, showing window", started.elapsed());
                             if let Some(w) = app_handle.get_webview_window("main") {
                                 let _ = w.show();
                                 let _ = w.set_focus();
@@ -107,8 +174,6 @@ pub fn run() {
                         Err(_) => std::thread::sleep(Duration::from_millis(150)),
                     }
                 }
-                // Suppress unused warning when not formatting `url` for users.
-                let _ = url;
             });
 
             Ok(())
@@ -118,13 +183,24 @@ pub fn run() {
                 kill_node_child(window.app_handle());
             }
         })
-        .build(tauri::generate_context!())
-        .expect("error building tauri application")
-        .run(|app_handle, event| {
-            if let RunEvent::Exit = event {
-                kill_node_child(app_handle);
-            }
-        });
+        .build(tauri::generate_context!());
+
+    match build_result {
+        Ok(app) => {
+            logf!("[agentkit] tauri build OK, entering run loop");
+            app.run(|app_handle, event| {
+                if let RunEvent::Exit = event {
+                    logf!("[agentkit] RunEvent::Exit, killing node child");
+                    kill_node_child(app_handle);
+                }
+            });
+        }
+        Err(e) => {
+            logf!("[agentkit] FATAL: tauri build failed: {}", e);
+        }
+    }
+
+    logf!("[agentkit] === exit ===");
 }
 
 fn kill_node_child(app_handle: &tauri::AppHandle) {
