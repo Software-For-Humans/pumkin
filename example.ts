@@ -1,6 +1,6 @@
 // example.ts — run with: npx tsx example.ts "your prompt here"
 // Requires Ollama running locally with a tool-capable model pulled.
-import { Agent, type Tool } from "./agent.ts";
+import { Agent, type Tool } from "./agent";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 

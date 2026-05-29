@@ -2,39 +2,65 @@
 
 Local-first platform for building and running AI agents against your own Ollama. No cloud inference, no API keys, no per-token cost. Built single-user for now; architected to grow into a sellable product.
 
-## Quickstart
+## Quickstart (web UI)
 
 ```bash
+# Root: agentkit runtime
 npm install
-ollama pull qwen3-coder:32b        # or llama3.1:8b to test fast
-npm run example -- "what time is it, then read package.json and summarize it"
+
+# Web app
+cd web
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Requires [Ollama](https://ollama.com) running locally (default `http://localhost:11434`) with a tool-capable model pulled.
+Then in the UI: create an MCP server (optional) → create an agent → click into it → enter a prompt → see the event stream live. The SQLite DB lives at `../agentkit.db` relative to `web/` (override with `AGENTKIT_DB`).
+
+## Quickstart (CLI)
+
+```bash
+ollama pull qwen3:8b
+npm run cli -- agents:create          # NAME=... MODEL=... SYSTEM_PROMPT=... BUILTIN_TOOLS=get_time
+npm run cli -- run <agentId> "what time is it?"
+```
+
+Requires [Ollama](https://ollama.com) running locally (default `http://localhost:11434`) with a tool-capable model pulled. Requires Node 22.5+ for the built-in `node:sqlite`.
 
 ## Layout
 
-- `agent.ts` — the runtime. The agent loop, Ollama tool-calling, and safety gates (allowlist, schema validation, per-tool timeouts, approval gate, event stream). Zero dependencies.
-- `mcp.ts` — adapts MCP servers into agent tools. `connectMcp(config)` / `connectMcpServers([...])` → `{ tools, close }`. Hand the tools straight to `new Agent({ tools })`. The only file that pulls in the MCP SDK.
-- `example.ts` — runnable demo with two built-in tools.
+```
+agent.ts           runtime: agent loop, Ollama tool-calling, safety gates (zero deps)
+mcp.ts             adapter: MCP servers → agent tools (only file that pulls the MCP SDK)
+store.ts           SQLite persistence: agents + mcp_servers tables (node:sqlite, no native deps)
+loader.ts          turns a stored agent row into a live Agent with tools wired up
+builtins.ts        registry of stock tools (get_time, read_text_file, ...)
+cli.ts             terminal CRUD + run command
+example.ts         minimal runnable demo, no DB
+store-test.ts      end-to-end integration test against a real MCP server
+web/               Next.js 15 UI over the same store + runtime
+```
 
 ## Architecture
 
-Three layers, built so the data model flows downhill:
+Four layers, built so the data model flows downhill:
 
-1. **Runtime** (`agent.ts`) — done. An "agent" is a loop: ask the model → run any requested tools → feed results back → repeat, with hard stop conditions.
-2. **MCP adapter** (`mcp.ts`) — done. Brings the whole MCP tool ecosystem in instead of hand-writing every integration. Stdio for local servers, Streamable HTTP for remote. Tools are namespaced (`server__tool`) and gated by default.
-3. **Store + UI** — next. SQLite (`agents` + `mcp_servers` tables) and a Next.js shell over the runtime's event stream. Distribution later via Tauri wrapping the same code.
+1. **Runtime** (`agent.ts`) — agent loop with allowlist, schema validation, per-tool timeouts, approval gate, event stream.
+2. **MCP adapter** (`mcp.ts`) — brings the whole MCP ecosystem in. Stdio for local servers, Streamable HTTP for remote. Tools namespaced (`server__tool`) and gated by default.
+3. **Store + CLI** (`store.ts` + `loader.ts` + `cli.ts`) — SQLite persistence + a runtime-config loader + a usable terminal product.
+4. **Web UI** (`web/`) — Next.js 15 App Router. Server actions for CRUD, an SSE endpoint streaming agent events to the browser live. Distribution later via Tauri wrapping the same code.
 
 ## Models
 
-Local agents live or die on tool-calling reliability. Skip anything under 14B for real use.
+Local agents live or die on tool-calling reliability. Skip anything under 8B for real use, and prefer models specifically tuned for it.
 
-- `qwen3-coder:32b` — current price/performance pick (24–32GB VRAM at q4/q5).
-- `gpt-oss:20b` — stable, purpose-built for agent tasks.
-- `llama3.3:70b` — safe choice with 48GB+ VRAM.
-- `llama3.1:8b` — dev iteration only.
+- `qwen3:8b` — current dev pick, reliable tool calling, ~5GB.
+- `llama3.1:8b` — also reliable, similar size.
+- `qwen3-coder:30b-a3b-instruct-q4_K_M` — MoE, ~18GB, faster inference than dense 30B.
+- `qwen3-coder:32b` — strongest at this scale (24–32GB VRAM at q4/q5).
+- `llama3.3:70b` — safest if you have 48GB+ VRAM.
+
+Models smaller than 8B (or earlier 7B variants like `qwen2.5-coder:7b`) often *imitate* tool-call JSON in the response text instead of using Ollama's structured `tool_calls` channel. The runtime correctly ignores those — a security feature, not a bug — but the agent will appear to "not call tools." Pull a better model.
 
 ## Status
 
-Runtime and MCP adapter complete and CLI-tested. Store and UI in progress.
+Runtime, MCP adapter, SQLite store, loader, CLI, and web UI complete and integration-tested. Next: distribution via Tauri; agent edit page; live model picker via Ollama's `/api/tags`; interactive approval UI.
