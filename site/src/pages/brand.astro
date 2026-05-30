@@ -1,0 +1,389 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const colors = [
+  { name: "Mint",            varname: "--brand-ink",         hex: "#B5DDB5", swatch: "swatch-B5DDB5", role: "Primary background, page surface" },
+  { name: "Deep Mint",       varname: "--brand-ink-deep",    hex: "#A3CCA3", swatch: "swatch-A3CCA3", role: "Elevated surfaces, footer" },
+  { name: "Cream",           varname: "--brand-panel",       hex: "#F3EBD9", swatch: "swatch-F3EBD9", role: "Cards, panels, contrast" },
+  { name: "Border",          varname: "--brand-border",      hex: "#8FB587", swatch: "swatch-8FB587", role: "Mint shadow, dividers" },
+  { name: "Ink",             varname: "--brand-fg",          hex: "#1F141F", swatch: "swatch-1F141F", role: "Primary text, borders, shadows" },
+  { name: "Muted",           varname: "--brand-fg-muted",    hex: "#5A4858", swatch: "swatch-5A4858", role: "Secondary text" },
+  { name: "Faint",           varname: "--brand-fg-faint",    hex: "#8E7E8C", swatch: "swatch-8E7E8C", role: "Captions, fine print" },
+  { name: "Pumkin Orange",   varname: "--brand-accent",      hex: "#F4A03E", swatch: "swatch-F4A03E", role: "Primary accent, wordmark, CTA fill" },
+  { name: "Burnt Orange",    varname: "--brand-accent-hover",hex: "#DC8829", swatch: "swatch-DC8829", role: "Hover, active states" },
+  { name: "Deep Pumpkin",    varname: "--brand-accent-quiet",hex: "#C26A1F", swatch: "swatch-C26A1F", role: "Outlines, link text on light bg" },
+  { name: "Highlight",       varname: "--brand-accent-light",hex: "#FFC97F", swatch: "swatch-FFC97F", role: "Tints, glow effects" },
+  { name: "Stem",            varname: "--brand-stem",        hex: "#7E9437", swatch: "swatch-7E9437", role: "Mascot stem, supporting" },
+  { name: "Eye Glow",        varname: "--brand-eye",         hex: "#FECE48", swatch: "swatch-FECE48", role: "Mascot eyes, accent highlight" },
+  { name: "Shadow",          varname: "--brand-shadow",      hex: "#5E4E5E", swatch: "swatch-5E4E5E", role: "Headphone purple, deep accent" },
+];
+---
+
+<Layout title="Pumkin — Brand Kit" description="Pumkin brand assets, palette, and usage guidelines.">
+  <Header />
+  <main>
+    <section class="brand-hero">
+      <div class="container">
+        <span class="eyebrow">brand kit</span>
+        <h1>Pumkin brand kit.</h1>
+        <p class="lead muted">
+          Everything you need to embed Pumkin in a writeup, deck, video, or third-party doc.
+          Pixel art, mint green, pumpkin orange — that's the whole story.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Logo</h2>
+        <p class="muted prose">
+          Pixel-art wordmark with mascot. Always render with crisp pixel edges
+          (CSS: <code>image-rendering: pixelated</code>). Never anti-alias.
+        </p>
+
+        <div class="logo-grid">
+          <div class="logo-card">
+            <div class="logo-card-display mint">
+              <img src="/logo.png" alt="Pumkin logo on mint" class="pixel" />
+            </div>
+            <div class="logo-card-meta">
+              <strong>Primary logo</strong>
+              <span class="faint">On mint background. Use this everywhere by default.</span>
+            </div>
+          </div>
+
+          <div class="logo-card">
+            <div class="logo-card-display cream">
+              <img src="/logo.png" alt="Pumkin logo on cream" class="pixel" />
+            </div>
+            <div class="logo-card-meta">
+              <strong>On cream</strong>
+              <span class="faint">Secondary backgrounds. Maintains contrast.</span>
+            </div>
+          </div>
+
+          <div class="logo-card">
+            <div class="logo-card-display dark">
+              <img src="/logo.png" alt="Pumkin logo on dark" class="pixel" />
+            </div>
+            <div class="logo-card-meta">
+              <strong>On dark</strong>
+              <span class="faint">Code blocks, terminal screenshots, video thumbnails.</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">Mascot only</h3>
+        <p class="muted prose">
+          Use the mascot solo for favicons, app icons, social avatars, or anywhere
+          the full wordmark won't fit. He has a name (TBD — submit suggestions).
+        </p>
+        <div class="mascot-row">
+          <div class="mascot-card mint">
+            <img src="/mascot.png" alt="" class="pixel" width="128" height="128" />
+          </div>
+          <div class="mascot-card cream">
+            <img src="/mascot.png" alt="" class="pixel" width="96" height="96" />
+          </div>
+          <div class="mascot-card dark">
+            <img src="/mascot.png" alt="" class="pixel" width="64" height="64" />
+          </div>
+          <div class="mascot-card mint">
+            <img src="/mascot.png" alt="" class="pixel" width="48" height="48" />
+          </div>
+          <div class="mascot-card cream">
+            <img src="/mascot.png" alt="" class="pixel" width="32" height="32" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Colors</h2>
+        <p class="muted prose">
+          Mint-green primary background, pumpkin-orange accent, deep purple-black ink. Tested for
+          AA contrast on body text. Use the CSS variables — never the raw hex — so palette
+          shifts propagate automatically.
+        </p>
+
+        <div class="palette-grid">
+          {colors.map((c) => (
+            <div class={"palette-card " + c.swatch}>
+              <div class="palette-name">{c.name}</div>
+              <div class="palette-hex mono">{c.hex}</div>
+              <div class="palette-var mono">{c.varname}</div>
+              <div class="palette-role">{c.role}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Typography</h2>
+        <p class="muted prose">
+          <strong>Inter</strong> for everything readable. <strong>JetBrains Mono</strong>
+          for code, terminal output, and small mono accents. The wordmark provides the
+          pixel-art texture — the body type stays clean and serious.
+        </p>
+
+        <div class="type-samples panel">
+          <div class="type-row">
+            <h1 style="margin:0">Display H1 · 3.75rem</h1>
+            <span class="faint">Inter 700 · -0.02em tracking · 1.15 leading</span>
+          </div>
+          <div class="type-row">
+            <h2 style="margin:0">Section H2 · 2.5rem</h2>
+            <span class="faint">Inter 700</span>
+          </div>
+          <div class="type-row">
+            <h3 style="margin:0">Subhead H3 · 1.25rem</h3>
+            <span class="faint">Inter 700</span>
+          </div>
+          <div class="type-row">
+            <p style="margin:0">Body copy at 1rem. The quick brown fox jumps over the lazy dog. Pumkin runs locally on your machine, against your own Ollama models, with full control over which tools your agents can use.</p>
+            <span class="faint">Inter 400 · 1.6 leading</span>
+          </div>
+          <div class="type-row">
+            <p class="mono" style="margin:0">{`const agent = new Agent({ model: "llama3.2:3b" });`}</p>
+            <span class="faint">JetBrains Mono 500</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Components</h2>
+        <p class="muted prose">
+          Chunky 2px-ink borders + offset drop-shadows give the UI a printed/sticker feel
+          that pairs with the pixel-art mascot. No gradient anywhere. No transparency
+          tricks. Flat color blocks with crisp edges.
+        </p>
+
+        <div class="component-row">
+          <a href="#" class="btn btn-primary">Get Pumkin · $99</a>
+          <a href="#" class="btn btn-secondary">View on GitHub</a>
+        </div>
+
+        <div class="component-row">
+          <div class="panel" style="max-width:340px">
+            <h3 style="margin-bottom:0.5rem">Panel example</h3>
+            <p style="font-size:0.9375rem">Cream background, ink border, offset shadow. Used for cards, callouts, and content blocks.</p>
+          </div>
+
+          <div class="terminal" style="max-width:400px">
+            <div><span class="ev-type">[run_started]</span></div>
+            <div><span class="ev-type">[tool_call]</span> <span class="ev-comment">get_time({})</span></div>
+            <div><span class="ev-type">[tool_result]</span> <span class="ev-result">2026-05-29T11:48:02Z</span></div>
+            <div><span class="ev-type">[done]</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container prose">
+        <h2>Voice and tone</h2>
+        <ul class="voice-list">
+          <li><strong>Plainspoken.</strong> No marketing-speak. "Build agents locally" not "Empower your team to unlock the power of AI."</li>
+          <li><strong>Honest.</strong> Tell people what doesn't work. "Mac/Linux not yet." "3B models tool-call but sometimes misfire."</li>
+          <li><strong>Anti-corporate.</strong> The point of Pumkin is that you own it. Lean into that. Don't hide the indie origin.</li>
+          <li><strong>Dry humor allowed.</strong> Cute mascot, serious product. The dissonance is the brand.</li>
+          <li><strong>No emoji in product copy.</strong> Mascot does that job; doubling up reads as trying too hard.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container prose">
+        <h2>Don't do this</h2>
+        <ul class="dont-list">
+          <li>Don't anti-alias or rasterize the pixel art at non-integer scales</li>
+          <li>Don't put the wordmark on white — always mint, cream, or dark</li>
+          <li>Don't recolor the mascot (Halloween orange is the look)</li>
+          <li>Don't add a tagline under the wordmark in headers — let copy do that work</li>
+          <li>Don't pair with serif body fonts — sticks with pixel mascot, fights modern type</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container prose">
+        <h2>Asset downloads</h2>
+        <p class="muted">
+          For now, right-click and save. A proper press kit zip will land at <code>/press</code> before public launch.
+        </p>
+        <ul class="download-list">
+          <li><a href="/logo.png">/logo.png</a> — wordmark + mascot horizontal</li>
+          <li><a href="/mascot.png">/mascot.png</a> — mascot only, transparent</li>
+          <li><a href="/favicon.png">/favicon.png</a> — 64×64 mascot crop</li>
+          <li><a href="/og.png">/og.png</a> — 1200×630 social share image</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .brand-hero {
+    padding: 4rem 0 2rem;
+  }
+  .lead {
+    font-size: 1.125rem;
+    max-width: 560px;
+    margin-top: 1rem;
+  }
+  .subsection-title {
+    margin-top: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Logo display cards */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .logo-card {
+    border: 2px solid var(--brand-fg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 4px 4px 0 var(--brand-fg);
+    background: var(--brand-panel);
+  }
+  .logo-card-display {
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+  }
+  .logo-card-display.mint { background: var(--brand-ink); }
+  .logo-card-display.cream { background: var(--brand-panel); }
+  .logo-card-display.dark { background: var(--code-bg); }
+  .logo-card-display img {
+    max-width: 80%;
+    height: auto;
+  }
+  .logo-card-meta {
+    padding: 1rem 1.25rem;
+    border-top: 2px solid var(--brand-fg);
+    background: var(--brand-ink);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  /* Mascot row */
+  .mascot-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    align-items: center;
+  }
+  .mascot-card {
+    border: 2px solid var(--brand-fg);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 0 var(--brand-fg);
+  }
+  .mascot-card.mint { background: var(--brand-ink); }
+  .mascot-card.cream { background: var(--brand-panel); }
+  .mascot-card.dark { background: var(--code-bg); }
+
+  /* Color palette */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  /* Color palette swatches — one class per color */
+  .palette-card {
+    padding: 1.5rem;
+    border: 2px solid var(--brand-fg);
+    border-radius: var(--radius);
+    box-shadow: 3px 3px 0 var(--brand-fg);
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--brand-fg);
+  }
+  .palette-card .palette-name { font-weight: 800; font-size: 1.125rem; }
+  .palette-card .palette-hex { font-size: 0.875rem; font-weight: 600; margin-top: 0.25rem; }
+  .palette-card .palette-var { font-size: 0.8125rem; margin-top: 0.5rem; opacity: 0.75; }
+  .palette-card .palette-role { font-size: 0.8125rem; margin-top: 0.75rem; opacity: 0.85; line-height: 1.4; }
+
+  /* Background per swatch */
+  .swatch-B5DDB5 { background: #B5DDB5; }
+  .swatch-A3CCA3 { background: #A3CCA3; }
+  .swatch-F3EBD9 { background: #F3EBD9; }
+  .swatch-8FB587 { background: #8FB587; }
+  .swatch-1F141F { background: #1F141F; color: var(--brand-ink); }
+  .swatch-1F141F .palette-var { color: var(--brand-ink-deep); }
+  .swatch-5A4858 { background: #5A4858; color: var(--brand-ink); }
+  .swatch-5A4858 .palette-var { color: var(--brand-ink-deep); }
+  .swatch-8E7E8C { background: #8E7E8C; color: var(--brand-fg); }
+  .swatch-F4A03E { background: #F4A03E; }
+  .swatch-DC8829 { background: #DC8829; }
+  .swatch-C26A1F { background: #C26A1F; color: var(--brand-ink); }
+  .swatch-C26A1F .palette-var { color: var(--brand-ink-deep); }
+  .swatch-FFC97F { background: #FFC97F; }
+  .swatch-7E9437 { background: #7E9437; color: var(--brand-ink); }
+  .swatch-7E9437 .palette-var { color: var(--brand-ink-deep); }
+  .swatch-FECE48 { background: #FECE48; }
+  .swatch-5E4E5E { background: #5E4E5E; color: var(--brand-ink); }
+  .swatch-5E4E5E .palette-var { color: var(--brand-ink-deep); }
+
+  /* Type samples */
+  .type-samples {
+    margin-top: 2rem;
+    background: var(--brand-panel);
+  }
+  .type-row {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--brand-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .type-row:last-child { border-bottom: none; }
+
+  /* Components */
+  .component-row {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  /* Lists */
+  .voice-list, .dont-list, .download-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+  .voice-list li, .dont-list li, .download-list li {
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--brand-border);
+    font-size: 0.9375rem;
+  }
+  .voice-list li::before { content: "→ "; color: var(--brand-accent-quiet); font-weight: 700; }
+  .dont-list li::before { content: "✕ "; color: var(--brand-accent-quiet); font-weight: 700; }
+  .download-list li::before { content: "↓ "; color: var(--brand-accent-quiet); font-weight: 700; }
+</style>

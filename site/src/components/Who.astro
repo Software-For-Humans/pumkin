@@ -1,0 +1,79 @@
+---
+---
+
+<section id="who" class="section">
+  <div class="container">
+    <div class="who-grid">
+      <div>
+        <h2>Pumkin is for you if…</h2>
+        <ul class="check-list">
+          <li>You already run Ollama and you've been wiring agents together by hand</li>
+          <li>You don't want your prompts, tool calls, or conversation history leaving your machine</li>
+          <li>You're tired of paying $20/mo to five different AI products to do what one local model could handle</li>
+          <li>You want to inspect every tool call your agent makes before it runs</li>
+          <li>You've used Open Interpreter, AnythingLLM, or LM Studio and wanted them to do <em>more</em>, not less</li>
+          <li>You believe a tool you own outright beats a subscription you rent forever</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Pumkin is not for you if…</h2>
+        <ul class="x-list">
+          <li>You don't have Ollama installed and don't want to install it</li>
+          <li>You want to chat with one model — Pumkin is for agents that <em>do things</em></li>
+          <li>You need the absolute best model quality — local models can't match GPT-5 on hard reasoning</li>
+          <li>You're looking for a no-code product. Pumkin is built for people comfortable in a terminal.</li>
+          <li>You expect Mac/Linux support today. Windows first; the rest is on the roadmap.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .who-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+  @media (max-width: 800px) {
+    .who-grid { grid-template-columns: 1fr; }
+  }
+  .check-list, .x-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+  .check-list li, .x-list li {
+    position: relative;
+    padding-left: 1.75rem;
+    margin-bottom: 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--brand-fg);
+  }
+  .check-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--brand-accent-quiet);
+    font-weight: 800;
+  }
+  .x-list li {
+    color: var(--brand-fg-muted);
+  }
+  .x-list li::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--brand-fg-muted);
+    font-weight: 800;
+  }
+  .check-list em, .x-list em {
+    color: var(--brand-fg);
+    font-style: normal;
+    font-weight: 600;
+  }
+</style>

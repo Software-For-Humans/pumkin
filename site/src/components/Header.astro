@@ -1,0 +1,60 @@
+---
+// src/components/Header.astro
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <img src="/logo.png" alt="Pumkin" class="pixel logo-img" width="160" height="40" />
+    </a>
+    <nav class="site-nav">
+      <a href="#what">what</a>
+      <a href="#who">who it's for</a>
+      <a href="#faq">faq</a>
+      <a href="/brand" class="brand-link">brand</a>
+      <a href="#buy" class="btn btn-primary nav-cta">Get Pumkin · $99</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 2px solid var(--brand-fg);
+    background: var(--brand-ink);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+  .logo { display: flex; align-items: center; }
+  .logo-img {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+  .site-nav {
+    display: flex;
+    gap: 1.75rem;
+    align-items: center;
+    font-size: 0.9375rem;
+  }
+  .site-nav a {
+    color: var(--brand-fg);
+    font-weight: 600;
+  }
+  .site-nav a:hover { color: var(--brand-accent-quiet); }
+  .nav-cta {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    box-shadow: 2px 2px 0 var(--brand-fg);
+  }
+  .brand-link { color: var(--brand-fg-muted) !important; }
+  @media (max-width: 720px) {
+    .site-nav a:not(.nav-cta) { display: none; }
+  }
+</style>

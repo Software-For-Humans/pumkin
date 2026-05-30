@@ -1,0 +1,72 @@
+---
+// src/components/What.astro — concrete feature list. Each row is a real capability
+// validated end-to-end in dev. Don't add things here that aren't built.
+
+const features = [
+  {
+    title: "Native desktop app",
+    body: "Tauri-based installer for Windows (macOS and Linux next). Bundled Node.js — no system dependencies beyond Ollama itself.",
+  },
+  {
+    title: "Local models via Ollama",
+    body: "Talks to your existing Ollama install. Picks up your installed models automatically. Run llama3.2:3b on 8GB of RAM or qwen3:14b if your machine can handle it.",
+  },
+  {
+    title: "MCP tools, allowlisted per agent",
+    body: "Connect any stdio or Streamable HTTP MCP server. Pumkin runs each tool through a JSON schema check and per-tool timeout. Tools are namespaced so the model can't accidentally call something it shouldn't.",
+  },
+  {
+    title: "Per-call approval gate",
+    body: "Mark any tool as 'requires approval' and Pumkin pauses the run, shows you the exact call and args, waits for your green light. Approve once. Deny once. No global trust.",
+  },
+  {
+    title: "Run history with full event replay",
+    body: "Every run persisted to SQLite. Inspect the model response, the tool calls, the tool results, the timings. Replay anything. Debug what the model actually saw, not what you thought it saw.",
+  },
+  {
+    title: "Multi-turn conversations",
+    body: "Persistent threads with full context. Ask a follow-up; Pumkin remembers turn one. Same agent, multiple conversations, all logged.",
+  },
+];
+---
+
+<section id="what" class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>What's in the box.</h2>
+      <p class="muted">
+        Everything below is built, tested, and shipping in v0.0.1. No roadmap items
+        in this list — what you pay for is what you get.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      {features.map((f) => (
+        <div class="feature panel">
+          <h3>{f.title}</h3>
+          <p>{f.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-header {
+    margin-bottom: 3rem;
+    max-width: var(--content-width);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .feature h3 {
+    color: var(--brand-fg);
+    margin-bottom: 0.5rem;
+  }
+  .feature p {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+</style>

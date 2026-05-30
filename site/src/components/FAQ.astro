@@ -1,0 +1,86 @@
+---
+const faqs = [
+  {
+    q: "Why pay for this when LM Studio and AnythingLLM are free?",
+    a: "Different problem. LM Studio is a model runner — it lets you chat with a local model. AnythingLLM is a RAG product — it lets you ask questions over your documents. Pumkin is an agent IDE — it lets you build named agents with specific tools and audit every call they make. If you've tried wiring agents together by hand using the Ollama API + MCP servers, you know how much glue this saves. The $99 is for the saved weekend of building it yourself.",
+  },
+  {
+    q: "What do I need installed on my machine?",
+    a: "Just Ollama (free, from ollama.com). Pumkin's installer bundles Node.js and everything else. No Rust, no Visual Studio, no Python. Run the .exe, you're done.",
+  },
+  {
+    q: "Is the source code open?",
+    a: "Source-available to license holders, but not open-source under a permissive license. That's an intentional choice — Pumkin is a paid product, not a free one. License holders get the full source, can modify it for their own use, can audit every line. They just can't redistribute it.",
+  },
+  {
+    q: "Mac and Linux support?",
+    a: "Windows installer ships today. Mac and Linux are next — the Tauri shell is cross-platform; the bottleneck is getting the bundled-Node + code-signing story working on each platform. Founding license holders get all platforms when they ship, no upcharge.",
+  },
+  {
+    q: "What if it doesn't work for me?",
+    a: "30-day refund, no questions, no forms. Email and you get your money back. If you're past 30 days and a major version update breaks your workflow, email anyway — I'm one person and I'll work it out with you.",
+  },
+  {
+    q: "What about updates?",
+    a: "Lifetime updates for all v0.x releases. v1.0 (when it ships) will likely be a paid upgrade for new buyers, but founding license holders get it free.",
+  },
+  {
+    q: "Why $99? Why a founding license cap?",
+    a: "Because I want to ship something real and not a Series-A pitch deck. 50 founding licenses at $99 funds the code-signing certs, the macOS/Linux build work, and a year of development. After 50, price goes up — probably to $149 or $199 — and I get to keep building based on actual user feedback rather than guessing.",
+  },
+  {
+    q: "Who built this?",
+    a: "An indie founder shipping out of Vigo, Spain. Software For Humans. Track record of building, shipping, and supporting small tools. Not a venture-backed startup. Not a side project of a bigger company. Just one person who wanted this thing to exist.",
+  },
+];
+---
+
+<section id="faq" class="section">
+  <div class="container prose">
+    <h2>Honest answers.</h2>
+    <div class="faqs">
+      {faqs.map((f) => (
+        <details class="faq-item">
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faqs { margin-top: 2rem; }
+  .faq-item {
+    border-bottom: 1px solid var(--brand-border);
+    padding: 1.25rem 0;
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item summary {
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--brand-fg);
+    list-style: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 1rem;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before {
+    content: "+";
+    color: var(--brand-accent-quiet);
+    font-weight: 800;
+    flex-shrink: 0;
+    line-height: 1;
+    font-size: 1.25rem;
+  }
+  .faq-item[open] summary::before { content: "−"; }
+  .faq-item p {
+    margin-top: 0.75rem;
+    padding-left: 1.5rem;
+    line-height: 1.6;
+    font-size: 0.9375rem;
+    color: var(--brand-fg-muted);
+  }
+</style>

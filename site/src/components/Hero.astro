@@ -1,0 +1,137 @@
+---
+// src/components/Hero.astro — headline + CTA + working terminal mock.
+// The terminal mock is real output from a validation run (llama3.2:3b + get_time).
+---
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">v0.0.1 · founding launch · 50 licenses</span>
+      <h1>
+        AI agents that<br />
+        <span class="accent">live on your machine.</span>
+      </h1>
+      <p class="hero-sub">
+        Pumkin is a local-first agent IDE for developers. Build, run, and audit AI agents
+        using your own Ollama models and your own MCP tools. No cloud. No API keys.
+        No recurring fees.
+      </p>
+      <div class="hero-ctas">
+        <a href="#buy" class="btn btn-primary btn-lg">
+          Get Pumkin · $99 lifetime
+        </a>
+        <a href="https://github.com/zgpbts79ws-dev/agentkit" class="btn btn-secondary btn-lg">
+          View on GitHub
+        </a>
+      </div>
+      <p class="hero-meta faint">
+        Windows installer · macOS / Linux soon · Source available to license holders
+      </p>
+    </div>
+
+    <div class="hero-visual">
+      <div class="mascot-frame">
+        <img src="/mascot.png" alt="" class="pixel hero-mascot" width="120" height="120" />
+      </div>
+      <div class="terminal hero-terminal">
+        <div class="prompt-line">
+          <span class="ev-comment">$</span> ask "What time is it?"
+        </div>
+        <div class="stream-line"><span class="ev-type">[run_started]</span></div>
+        <div class="stream-line">
+          <span class="ev-type">[model_response]</span>
+          <span class="ev-comment"> · tool_calls: get_time</span>
+        </div>
+        <div class="stream-line">
+          <span class="ev-type">[tool_call]</span>
+          <span class="ev-comment"> get_time({})</span>
+        </div>
+        <div class="stream-line">
+          <span class="ev-type">[tool_result]</span>
+          <span class="ev-result"> 2026-05-29T11:48:02.553Z</span>
+        </div>
+        <div class="stream-line">
+          <span class="ev-type">[model_response]</span>
+        </div>
+        <div class="stream-line indent">
+          <span class="ev-result">"The current time is 11:48 AM UTC on May 29, 2026."</span>
+        </div>
+        <div class="stream-line"><span class="ev-type">[done]</span></div>
+      </div>
+      <p class="terminal-caption faint">
+        Real output. Local Ollama. llama3.2:3b. Built-in get_time tool. 1.5s.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { padding: 5rem 0 6rem; }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--brand-fg);
+    background: var(--brand-accent);
+    text-transform: lowercase;
+    margin-bottom: 1.5rem;
+    padding: 0.375rem 0.875rem;
+    border: 2px solid var(--brand-fg);
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: 2px 2px 0 var(--brand-fg);
+  }
+  h1 .accent { color: var(--brand-accent-quiet); }
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.125rem;
+    max-width: 480px;
+    color: var(--brand-fg);
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .btn-lg {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+  .hero-meta {
+    margin-top: 1.5rem;
+    color: var(--brand-fg-muted);
+  }
+  .hero-visual {
+    position: relative;
+  }
+  .mascot-frame {
+    position: absolute;
+    top: -32px;
+    right: -12px;
+    z-index: 1;
+    transform: rotate(8deg);
+  }
+  .hero-mascot {
+    width: 120px;
+    height: 120px;
+    display: block;
+    filter: drop-shadow(4px 4px 0 var(--brand-fg));
+  }
+  .hero-terminal { font-size: 0.8125rem; }
+  .stream-line, .prompt-line { white-space: pre; }
+  .prompt-line { margin-bottom: 0.75rem; color: var(--brand-fg-muted); }
+  .indent { padding-left: 2rem; }
+  .terminal-caption { margin-top: 0.75rem; text-align: center; }
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .mascot-frame { top: -20px; right: 0; }
+    .hero-mascot { width: 80px; height: 80px; }
+  }
+</style>
