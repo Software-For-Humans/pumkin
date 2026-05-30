@@ -21,8 +21,8 @@ export default async function NewAgentPage() {
           label="Model"
           hint={
             modelsResult.ok
-              ? "Models with a ⚠ may have unreliable tool calling at this size."
-              : `Could not reach Ollama (${modelsResult.error}). Enter a model name manually.`
+              ? "Models with a ⚠ may pass unreliable arguments to tool calls. They usually still work — just expect occasional misfires on smaller models."
+              : `Could not reach Ollama (${modelsResult.error}). Start Ollama or enter a model name manually.`
           }
         >
           {modelsResult.ok && modelsResult.models.length > 0 ? (

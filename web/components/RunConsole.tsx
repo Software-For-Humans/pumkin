@@ -83,9 +83,14 @@ export default function RunConsole({ agentId }: { agentId: string }) {
         />
         <button
           onClick={running ? stop : start}
-          className={`px-4 py-1.5 rounded font-semibold text-sm ${
-            running ? "bg-red-700 hover:bg-red-600 text-white" : "bg-neutral-100 hover:bg-white text-neutral-900"
-          }`}
+          disabled={!running && !prompt.trim()}
+          className={
+            running
+              ? "px-4 py-1.5 rounded font-semibold text-sm bg-red-700 hover:bg-red-600 text-white"
+              : prompt.trim()
+                ? "px-4 py-1.5 rounded font-semibold text-sm bg-neutral-100 hover:bg-white text-neutral-900"
+                : "px-4 py-1.5 rounded font-semibold text-sm bg-neutral-800 text-neutral-500 cursor-not-allowed"
+          }
         >
           {running ? "stop" : "run"}
         </button>

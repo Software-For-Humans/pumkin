@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { store } from "@/lib/server";
 import { deleteRunAction } from "@/lib/actions";
+import ConfirmingForm from "@/components/ConfirmingForm";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +37,12 @@ export default function RunsListPage() {
                   </div>
                   <div className="text-xs text-neutral-400 truncate">{r.prompt}</div>
                 </Link>
-                <form action={deleteRunAction.bind(null, r.id)}>
+                <ConfirmingForm
+                  action={deleteRunAction.bind(null, r.id)}
+                  message="Delete this run from history?"
+                >
                   <button className="text-xs text-neutral-500 hover:text-red-400">delete</button>
-                </form>
+                </ConfirmingForm>
               </li>
             );
           })}

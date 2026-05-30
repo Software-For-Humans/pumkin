@@ -157,7 +157,14 @@ export default function ChatConsole({
         />
         <button
           onClick={running ? stop : send}
-          className={`px-4 py-1.5 rounded font-semibold text-sm ${running ? "bg-red-700 hover:bg-red-600 text-white" : "bg-neutral-100 hover:bg-white text-neutral-900"}`}
+          disabled={!running && !input.trim()}
+          className={
+            running
+              ? "px-4 py-1.5 rounded font-semibold text-sm bg-red-700 hover:bg-red-600 text-white"
+              : input.trim()
+                ? "px-4 py-1.5 rounded font-semibold text-sm bg-neutral-100 hover:bg-white text-neutral-900"
+                : "px-4 py-1.5 rounded font-semibold text-sm bg-neutral-800 text-neutral-500 cursor-not-allowed"
+          }
         >
           {running ? "stop" : "send"}
         </button>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { store } from "@/lib/server";
 import { deleteMcpServerAction } from "@/lib/actions";
+import ConfirmingForm from "@/components/ConfirmingForm";
 
 export const dynamic = "force-dynamic";
 
@@ -26,9 +27,12 @@ export default function McpListPage() {
                   {s.transport === "stdio" ? `${s.command} ${(s.args ?? []).join(" ")}` : s.url}
                 </div>
               </div>
-              <form action={deleteMcpServerAction.bind(null, s.id)}>
+              <ConfirmingForm
+                action={deleteMcpServerAction.bind(null, s.id)}
+                message={`Delete MCP server "${s.name}"? Any agents using it will lose access to its tools.`}
+              >
                 <button className="text-xs text-neutral-500 hover:text-red-400">delete</button>
-              </form>
+              </ConfirmingForm>
             </li>
           ))}
         </ul>

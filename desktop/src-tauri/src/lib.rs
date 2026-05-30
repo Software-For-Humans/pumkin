@@ -134,6 +134,10 @@ pub fn run() {
                 .env("AGENTKIT_DB", &db_path)
                 .env("PORT", PORT.to_string())
                 .env("HOSTNAME", "127.0.0.1")
+                // Suppress Node's "ExperimentalWarning: SQLite is experimental"
+                // noise. node:sqlite is stable in 24.x but the legacy warning
+                // still fires and clutters logs.
+                .env("NODE_NO_WARNINGS", "1")
                 .arg(&server_js)
                 .stdout(Stdio::from(node_stdout))
                 .stderr(Stdio::from(node_stderr))
