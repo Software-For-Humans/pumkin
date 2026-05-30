@@ -7,3 +7,11 @@ dist/
 *.sqlite
 *.sqlite3
 .DS_Store
+
+# Astro build cache
+.astro/
+
+# Local secrets (never commit)
+pumkin-secrets.txt
+.env
+.env.local
