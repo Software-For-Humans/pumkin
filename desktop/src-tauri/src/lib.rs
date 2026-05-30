@@ -77,6 +77,10 @@ pub fn run() {
             } else {
                 app.path().resource_dir()?.join("web")
             };
+            // Windows' `\\?\` extended-length namespace prefix breaks Node.js path
+            // parsing (it splits on `\` and lstats `C:`, which fails with EISDIR).
+            // Strip it here so all paths we pass into Node are normal Win32 paths.
+            let web_dir = strip_unc_prefix(&web_dir);
             logf!("[agentkit] web_dir = {:?}", web_dir);
             logf!("[agentkit] web_dir exists = {}", web_dir.exists());
 
@@ -231,4 +235,26 @@ fn resolve_bundled_node(_app: &tauri::App) -> Result<std::path::PathBuf, Box<dyn
     }
 
     Ok(node_path)
+}
+
+// Strip Windows' `\\?\` extended-length namespace prefix from a path.
+// Tauri's resource_dir() returns paths with this prefix on Windows, which
+// breaks Node.js path parsing (it lstats `C:` and fails with EISDIR).
+// On non-Windows targets this is a no-op.
+#[cfg(target_os = "windows")]
+fn strip_unc_prefix(p: &std::path::Path) -> std::path::PathBuf {
+    let s = p.to_string_lossy();
+    // Handle both `\\?\C:\foo` (drive form) and `\\?\UNC\server\share` (UNC form).
+    if let Some(rest) = s.strip_prefix(r"\\?\UNC\") {
+        std::path::PathBuf::from(format!(r"\\{}", rest))
+    } else if let Some(rest) = s.strip_prefix(r"\\?\") {
+        std::path::PathBuf::from(rest)
+    } else {
+        p.to_path_buf()
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn strip_unc_prefix(p: &std::path::Path) -> std::path::PathBuf {
+    p.to_path_buf()
 }
