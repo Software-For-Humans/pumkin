@@ -18,7 +18,7 @@ static LOG_FILE: OnceLock<Mutex<File>> = OnceLock::new();
 fn log_path() -> PathBuf {
     // Prefer LOCALAPPDATA on Windows; fall back to temp_dir if env var missing.
     if let Some(local) = std::env::var_os("LOCALAPPDATA") {
-        let dir = PathBuf::from(local).join("agentkit");
+        let dir = PathBuf::from(local).join("pumkin");
         let _ = std::fs::create_dir_all(&dir);
         return dir.join("startup.log");
     }

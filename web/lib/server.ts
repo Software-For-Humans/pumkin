@@ -14,7 +14,7 @@ declare global {
   var __agentkitStore: ReturnType<typeof openStore> | undefined;
 }
 
-const DB_PATH = process.env.AGENTKIT_DB ?? resolve(process.cwd(), "..", "agentkit.db");
+const DB_PATH = process.env.AGENTKIT_DB ?? resolve(process.cwd(), "..", "pumkin.db");
 
 export function store() {
   if (!globalThis.__agentkitStore) globalThis.__agentkitStore = openStore(DB_PATH);

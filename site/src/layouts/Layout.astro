@@ -38,7 +38,10 @@ const ogImage = "/og.png"; // drop in public/ when ready
     <meta name="twitter:image" content={ogImage} />
 
     <!-- Theme color matches brand ink -->
-    <meta name="theme-color" content="#0e0a06" />
+    <meta name="theme-color" content="#b5ddb5" />
+
+    <!-- Optional head injection from individual pages (e.g., noindex meta) -->
+    <slot name="head" />
   </head>
   <body>
     <slot />

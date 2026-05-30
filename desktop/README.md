@@ -1,4 +1,4 @@
-# agentkit-desktop
+# pumkin-desktop
 
 Tauri 2 shell that wraps the agentkit web app into a native desktop window. Spawns the bundled Next.js standalone server as a child process, points the embedded webview at it, and stores the SQLite database in the OS app-data directory.
 
@@ -62,7 +62,7 @@ The release binary **does not require Node.js on the target machine** — the bu
 ## Where state lives
 
 - SQLite database (per-OS app-data dir):
-  - Windows: `%APPDATA%\app.agentkit.desktop\agentkit.db`
-  - macOS: `~/Library/Application Support/app.agentkit.desktop/agentkit.db`
-  - Linux: `~/.local/share/app.agentkit.desktop/agentkit.db`
+  - Windows: `%APPDATA%\app.pumkin.desktop\pumkin.db`
+  - macOS: `~/Library/Application Support/app.pumkin.desktop/pumkin.db`
+  - Linux: `~/.local/share/app.pumkin.desktop/pumkin.db`
 - Ollama: external — user installs separately. The Next.js app talks to `http://localhost:11434` by default; override with `OLLAMA_URL`.

@@ -96,7 +96,7 @@ console.log(`[setup-node] staged ${outputPath}`);
 async function extractFromZip(zipPath, entryName, outPath) {
   // Use PowerShell's Expand-Archive on Windows (no external tools needed),
   // then copy the single file we want out of the extracted tree.
-  const extractDir = resolve(tmpdir(), `agentkit-node-extract-${Date.now()}`);
+  const extractDir = resolve(tmpdir(), `pumkin-node-extract-${Date.now()}`);
   await run("powershell", [
     "-NoProfile",
     "-Command",
@@ -109,7 +109,7 @@ async function extractFromZip(zipPath, entryName, outPath) {
 
 async function extractFromTar(tarPath, entryName, outPath) {
   // System tar handles both .tar.gz and .tar.xz on modern macOS and Linux.
-  const extractDir = resolve(tmpdir(), `agentkit-node-extract-${Date.now()}`);
+  const extractDir = resolve(tmpdir(), `pumkin-node-extract-${Date.now()}`);
   await mkdir(extractDir, { recursive: true });
   await run("tar", ["-xf", tarPath, "-C", extractDir, entryName]);
   const extracted = resolve(extractDir, entryName);

@@ -1,13 +1,14 @@
 import { defineConfig } from "astro/config";
+import vercel from "@astrojs/vercel";
 
+// Hybrid: static by default for marketing pages (they opt in with
+// `export const prerender = true`), server-rendered for /api/* and /thank-you.
 export default defineConfig({
-  // Site URL used for absolute URLs in OG tags, sitemap, etc.
-  // Replace with the real domain once it's purchased (pumkin.app, pumkin.dev, etc.)
   site: "https://pumkin.app",
-
-  // Static output. Vercel auto-detects this and serves from /dist.
-  output: "static",
-
-  // Trailing-slash off for cleaner URLs.
+  output: "server",
+  adapter: vercel({
+    webAnalytics: { enabled: false },
+    maxDuration: 30,
+  }),
   trailingSlash: "never",
 });

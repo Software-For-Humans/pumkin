@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    agentkit_desktop_lib::run()
+    pumkin_desktop_lib::run()
 }
