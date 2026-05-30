@@ -31,7 +31,7 @@
 
     <div class="hero-visual">
       <div class="mascot-frame">
-        <img src="/mascot.png" alt="" class="pixel hero-mascot" width="120" height="120" />
+        <img src="/mascot.png" alt="" class="pixel hero-mascot" width="320" height="320" />
       </div>
       <div class="terminal hero-terminal">
         <div class="prompt-line">
@@ -113,16 +113,16 @@
   }
   .mascot-frame {
     position: absolute;
-    top: -32px;
-    right: -12px;
+    top: -120px;
+    right: -60px;
     z-index: 1;
     transform: rotate(8deg);
   }
   .hero-mascot {
-    width: 120px;
-    height: 120px;
+    width: 320px;
+    height: 320px;
     display: block;
-    filter: drop-shadow(4px 4px 0 var(--brand-fg));
+    filter: drop-shadow(8px 8px 0 var(--brand-fg));
   }
   .hero-terminal { font-size: 0.8125rem; }
   .stream-line, .prompt-line { white-space: pre; }
@@ -131,7 +131,7 @@
   .terminal-caption { margin-top: 0.75rem; text-align: center; }
   @media (max-width: 900px) {
     .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
-    .mascot-frame { top: -20px; right: 0; }
-    .hero-mascot { width: 80px; height: 80px; }
+    .mascot-frame { top: -60px; right: 0; }
+    .hero-mascot { width: 200px; height: 200px; }
   }
 </style>
