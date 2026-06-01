@@ -1,6 +1,7 @@
 ---
 const STRIPE_URL = "https://buy.stripe.com/3cIeV77NK07s5UFcBq4Ja03";
-const REMAINING_OF_50 = 50;
+// Default shown before the live count loads (and the no-JS fallback).
+const DEFAULT_REMAINING = 50;
 ---
 
 <section id="buy" class="section buy-section">
@@ -8,7 +9,7 @@ const REMAINING_OF_50 = 50;
     <div class="buy-card panel">
       <img src="/mascot.png" alt="" class="pixel buy-mascot" width="200" height="200" />
       <div class="buy-header">
-        <span class="eyebrow-buy">founding license · {REMAINING_OF_50} of 50 remaining</span>
+        <span class="eyebrow-buy" data-slots-eyebrow>founding license · <span data-slots-remaining>{DEFAULT_REMAINING}</span> of 50 remaining</span>
         <h2>Get Pumkin.</h2>
       </div>
 
@@ -25,7 +26,7 @@ const REMAINING_OF_50 = 50;
         <li>30-day refund, no questions asked</li>
       </ul>
 
-      <a href={STRIPE_URL} class="btn btn-primary btn-buy">
+      <a href={STRIPE_URL} class="btn btn-primary btn-buy" data-buy-btn>
         Buy Pumkin · $99
       </a>
 
@@ -35,6 +36,47 @@ const REMAINING_OF_50 = 50;
     </div>
   </div>
 </section>
+
+<script>
+  // Live founding-slot counter. The page is static; this fetches the real
+  // remaining count at runtime and updates every counter on the page.
+  // Fails silently — if the fetch breaks, the static default stays.
+  (async () => {
+    try {
+      const res = await fetch("/api/slots", { cache: "no-store" });
+      if (!res.ok) return;
+      const { remaining, total } = await res.json();
+      if (typeof remaining !== "number") return;
+
+      // Update every remaining-count element (hero + buy section)
+      document.querySelectorAll("[data-slots-remaining]").forEach((el) => {
+        el.textContent = String(remaining);
+      });
+
+      if (remaining <= 0) {
+        // Sold out: relabel the eyebrows and disable the buy button
+        document.querySelectorAll("[data-slots-eyebrow]").forEach((el) => {
+          el.textContent = "founding licenses · sold out";
+        });
+        document.querySelectorAll("[data-buy-btn]").forEach((el) => {
+          const a = el as HTMLAnchorElement;
+          a.textContent = "Founding 50 sold out";
+          a.removeAttribute("href");
+          a.setAttribute("aria-disabled", "true");
+          a.style.opacity = "0.6";
+          a.style.pointerEvents = "none";
+        });
+      } else if (remaining <= 10) {
+        // Low-stock nudge
+        document.querySelectorAll("[data-slots-eyebrow]").forEach((el) => {
+          el.textContent = `founding license · only ${remaining} of ${total} left`;
+        });
+      }
+    } catch {
+      /* keep static default */
+    }
+  })();
+</script>
 
 <style>
   .buy-section { padding: 6rem 0; }
