@@ -1,0 +1,82 @@
+{
+	"version": 3,
+	"routes": [
+		{
+			"src": "^/(.*)/$",
+			"headers": {
+				"Location": "/$1"
+			},
+			"status": 308
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^/_astro/(.*)$",
+			"headers": {
+				"cache-control": "public, max-age=31536000, immutable"
+			},
+			"continue": true
+		},
+		{
+			"src": "^/_server-islands/([^/]+?)$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/_image$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/download/([^/]+?)$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/order/([^/]+?)$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/slots$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/stripe-webhook$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/faq$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/first-agent$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/install-pumkin$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/installing-ollama$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/mcp-tools$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/runs-and-threads$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs/troubleshooting$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/docs$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/thank-you$",
+			"dest": "_render"
+		}
+	]
+}

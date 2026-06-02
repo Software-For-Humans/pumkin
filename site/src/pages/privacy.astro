@@ -1,0 +1,136 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+export const prerender = true;
+
+const updated = "June 2, 2026";
+---
+
+<Layout
+  title="Privacy Policy — Pumkin"
+  description="How Pumkin (Software For Humans) handles your data: what we collect, why, who processes it, and your rights."
+>
+  <Header />
+  <main class="container legal">
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: {updated}</p>
+
+    <p>
+      Pumkin is a product of <strong>Software For Humans</strong>, operated by Lewis LaBrie
+      ("we", "us"). This policy explains what personal data we collect when you visit
+      <a href="https://pumkin.app">pumkin.app</a> or buy a Pumkin license, why we collect it,
+      who processes it, and the rights you have over it. Questions:
+      <a href="mailto:hi@pumkin.app">hi@pumkin.app</a>.
+    </p>
+
+    <h2>The short version</h2>
+    <p>
+      The Pumkin desktop app runs entirely on your machine. Your prompts, your models, your
+      files, and your agent runs never reach us — there is no Pumkin cloud and no telemetry on
+      your agent activity. The only personal data we hold is what's needed to sell you a license
+      and deliver your download: your email, name, and payment confirmation.
+    </p>
+
+    <h2>What we collect</h2>
+    <ul>
+      <li>
+        <strong>Purchase information.</strong> When you buy a license, we receive your email
+        address, name (if provided), and details of the transaction (amount, currency, a Stripe
+        payment/session reference, and your founding-member number). We do <em>not</em> receive
+        or store your full card number — payment card data is handled entirely by Stripe.
+      </li>
+      <li>
+        <strong>Download activity.</strong> We generate a unique download token tied to your
+        purchase and record how many times it's used, so we can deliver and re-deliver your
+        installer.
+      </li>
+      <li>
+        <strong>Email correspondence.</strong> If you email us for support, we keep that
+        correspondence to help you.
+      </li>
+      <li>
+        <strong>Basic server logs.</strong> Our hosting provider may process standard technical
+        data (such as IP address and request metadata) to serve the site securely. We do not use
+        this for tracking or advertising.
+      </li>
+    </ul>
+
+    <h2>What we do NOT do</h2>
+    <ul>
+      <li>We do not run advertising or third-party tracking pixels on this site.</li>
+      <li>We do not collect any data from inside the Pumkin desktop application.</li>
+      <li>We do not sell or rent your personal data to anyone.</li>
+    </ul>
+
+    <h2>Why we process it (legal bases)</h2>
+    <p>
+      We process your purchase and download data to <strong>perform our contract</strong> with
+      you (selling and delivering the license). We process support emails and keep transaction
+      records under our <strong>legitimate interests</strong> in running the business and our
+      <strong>legal obligations</strong> (such as tax and accounting record-keeping).
+    </p>
+
+    <h2>Who processes your data</h2>
+    <p>We use a small number of trusted service providers ("processors") to operate:</p>
+    <ul>
+      <li><strong>Stripe</strong> — payment processing.</li>
+      <li><strong>Supabase</strong> — database storing your order record (hosted in the EU, Frankfurt region).</li>
+      <li><strong>Resend</strong> — sending your welcome/download email.</li>
+      <li><strong>Vercel</strong> — website hosting.</li>
+      <li><strong>DigitalOcean</strong> — storage and delivery of the installer file.</li>
+    </ul>
+    <p>
+      Each operates under its own privacy terms. Some may process data outside your country; where
+      that happens, appropriate safeguards (such as Standard Contractual Clauses) apply.
+    </p>
+
+    <h2>How long we keep it</h2>
+    <p>
+      We keep your order record for as long as you hold a license and as long as required for
+      legal and accounting purposes, then delete or anonymize it. You can ask us to delete your
+      data sooner (subject to record-keeping obligations) — see below.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>
+      Depending on where you live (including under the EU/UK GDPR), you have the right to access,
+      correct, delete, or export your personal data, and to object to or restrict certain
+      processing. To exercise any of these, email <a href="mailto:hi@pumkin.app">hi@pumkin.app</a>
+      and we'll respond within a reasonable time. You also have the right to complain to your local
+      data protection authority.
+    </p>
+
+    <h2>Children</h2>
+    <p>Pumkin is a developer tool intended for adults. We do not knowingly collect data from children.</p>
+
+    <h2>Changes</h2>
+    <p>
+      We may update this policy as the product evolves. Material changes will be reflected by the
+      "last updated" date above.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Software For Humans — Vigo, Spain. Email <a href="mailto:hi@pumkin.app">hi@pumkin.app</a>.
+    </p>
+
+    <p class="legal-nav"><a href="/terms">Terms of Service →</a></p>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal { max-width: 720px; padding-top: 3rem; padding-bottom: 4rem; }
+  .legal h1 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 0.5rem; }
+  .legal .updated { color: var(--brand-fg-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+  .legal h2 { font-size: 1.3rem; margin-top: 2.25rem; margin-bottom: 0.625rem; }
+  .legal p, .legal li { line-height: 1.7; color: var(--brand-fg); }
+  .legal p { margin-bottom: 1rem; }
+  .legal ul { margin: 0 0 1.25rem; padding-left: 1.4rem; }
+  .legal li { margin-bottom: 0.5rem; }
+  .legal a { color: var(--brand-accent-quiet); font-weight: 600; }
+  .legal a:hover { text-decoration: underline; }
+  .legal-nav { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--brand-border); }
+</style>

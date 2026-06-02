@@ -4,14 +4,60 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  /** Per-page canonical override; defaults to the current URL. */
+  canonical?: string;
+  /** Set true on pages that shouldn't be indexed (e.g. /thank-you). */
+  noindex?: boolean;
+  /** Inject page-specific JSON-LD structured data. */
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
   title = "Pumkin — local AI agents for developers",
   description = "Build, run, and audit AI agents on your own machine. Pumkin uses your local Ollama and your own MCP tools. No cloud, no API keys, no recurring fees.",
+  canonical,
+  noindex = false,
+  jsonLd,
 } = Astro.props;
 
 const ogImage = "/og.png"; // drop in public/ when ready
+
+// Canonical URL: explicit prop, else the current path resolved against `site`.
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+const ogImageURL = new URL(ogImage, Astro.site).href;
+
+// Google Search Console verification token, set in Vercel as
+// PUBLIC_GSC_VERIFICATION (the HTML-tag verification method). Falsy = omit.
+const gscToken = import.meta.env.PUBLIC_GSC_VERIFICATION;
+
+// Default site-wide structured data: the product + the publisher.
+const defaultJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "Pumkin",
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Windows",
+      description:
+        "A local-first desktop agent IDE. Build, run, and audit AI agents on your own machine using your local Ollama models and your own MCP tools.",
+      url: "https://pumkin.app",
+      offers: {
+        "@type": "Offer",
+        price: "99",
+        priceCurrency: "USD",
+        description: "Founding license — lifetime updates, all platforms.",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Software For Humans",
+        url: "https://swforhumans.com",
+      },
+    },
+  ],
+};
+
+const structuredData = jsonLd ?? defaultJsonLd;
 ---
 
 <!doctype html>
@@ -26,19 +72,27 @@ const ogImage = "/og.png"; // drop in public/ when ready
     <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {gscToken && <meta name="google-site-verification" content={gscToken} />}
 
     <!-- OG / Twitter -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:site_name" content="Pumkin" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={ogImageURL} />
 
     <!-- Theme color matches brand ink -->
     <meta name="theme-color" content="#b5ddb5" />
+
+    <!-- Structured data for rich results -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
     <!-- Optional head injection from individual pages (e.g., noindex meta) -->
     <slot name="head" />

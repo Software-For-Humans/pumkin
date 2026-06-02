@@ -1,0 +1,120 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+export const prerender = true;
+
+const updated = "June 2, 2026";
+---
+
+<Layout
+  title="Terms of Service — Pumkin"
+  description="The terms for buying and using a Pumkin license: license grant, source-available terms, the 30-day refund, warranty disclaimer, and liability."
+>
+  <Header />
+  <main class="container legal">
+    <h1>Terms of Service</h1>
+    <p class="updated">Last updated: {updated}</p>
+
+    <p>
+      These terms govern your purchase and use of Pumkin, a desktop software product from
+      <strong>Software For Humans</strong>, operated by Lewis LaBrie ("we", "us"). By buying a
+      license or using the software, you agree to them. Questions:
+      <a href="mailto:hi@pumkin.app">hi@pumkin.app</a>.
+    </p>
+
+    <h2>1. What you're buying</h2>
+    <p>
+      A Pumkin license is a one-time purchase that grants you a personal, non-exclusive,
+      non-transferable right to install and use Pumkin on machines you own or control. A
+      "founding license" additionally includes lifetime updates across all platforms we release.
+      We don't charge recurring fees for the license.
+    </p>
+
+    <h2>2. Source-available terms</h2>
+    <p>
+      License holders receive access to Pumkin's source code so they can read, audit, and build it
+      for their own use. This is <strong>source-available, not open source</strong>: you may not
+      redistribute the source or compiled binaries, resell it, or publish it publicly, and you may
+      not remove licensing or attribution. The software remains our intellectual property.
+    </p>
+
+    <h2>3. Refunds</h2>
+    <p>
+      We offer a <strong>30-day money-back guarantee</strong>. If Pumkin isn't right for you within
+      30 days of purchase, email <a href="mailto:hi@pumkin.app">hi@pumkin.app</a> and we'll refund
+      you in full — no need to justify it. Statutory rights you may have (for example, EU consumer
+      withdrawal rights) apply in addition to this and are not limited by it.
+    </p>
+
+    <h2>4. The software depends on third-party components</h2>
+    <p>
+      Pumkin runs AI models through <strong>Ollama</strong> and connects to tools via the Model
+      Context Protocol (MCP). You are responsible for installing and running those components, for
+      the models you choose, and for any MCP tools or servers you connect. We don't control the
+      output of any model, and model output may be inaccurate — review it before relying on it.
+    </p>
+
+    <h2>5. Your responsibilities</h2>
+    <ul>
+      <li>You use Pumkin and any tools you connect to it lawfully and at your own risk.</li>
+      <li>
+        Agents can take real actions through the tools you give them. Pumkin includes an approval
+        step for tool calls; you are responsible for what you approve and for what your agents do.
+      </li>
+      <li>You keep your download link and license reasonably private.</li>
+    </ul>
+
+    <h2>6. Warranty disclaimer</h2>
+    <p>
+      Pumkin is provided <strong>"as is"</strong>, without warranties of any kind, express or
+      implied, including merchantability, fitness for a particular purpose, and non-infringement.
+      It is early-stage software (v0.x) and may contain bugs. We don't warrant that it will be
+      uninterrupted or error-free. This does not exclude any warranty that cannot be excluded under
+      applicable law.
+    </p>
+
+    <h2>7. Limitation of liability</h2>
+    <p>
+      To the maximum extent permitted by law, we are not liable for indirect, incidental, special,
+      or consequential damages, or for loss of data, profits, or business, arising from your use of
+      Pumkin. Our total liability for any claim relating to the software is limited to the amount
+      you paid for your license. Nothing here limits liability that cannot be limited by law.
+    </p>
+
+    <h2>8. Updates and changes</h2>
+    <p>
+      We may update Pumkin and these terms over time. Material changes to these terms will be
+      reflected by the "last updated" date above. Continued use after a change means you accept it.
+    </p>
+
+    <h2>9. Governing law</h2>
+    <p>
+      These terms are governed by the laws of <strong>Spain</strong>, without regard to conflict-of-law
+      rules, and subject to any mandatory consumer-protection rights of the country where you live.
+    </p>
+
+    <h2>10. Contact</h2>
+    <p>
+      Software For Humans — Vigo, Spain. Email <a href="mailto:hi@pumkin.app">hi@pumkin.app</a>.
+    </p>
+
+    <p class="legal-nav"><a href="/privacy">Privacy Policy →</a></p>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal { max-width: 720px; padding-top: 3rem; padding-bottom: 4rem; }
+  .legal h1 { font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 0.5rem; }
+  .legal .updated { color: var(--brand-fg-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+  .legal h2 { font-size: 1.3rem; margin-top: 2.25rem; margin-bottom: 0.625rem; }
+  .legal p, .legal li { line-height: 1.7; color: var(--brand-fg); }
+  .legal p { margin-bottom: 1rem; }
+  .legal ul { margin: 0 0 1.25rem; padding-left: 1.4rem; }
+  .legal li { margin-bottom: 0.5rem; }
+  .legal a { color: var(--brand-accent-quiet); font-weight: 600; }
+  .legal a:hover { text-decoration: underline; }
+  .legal-nav { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--brand-border); }
+</style>
