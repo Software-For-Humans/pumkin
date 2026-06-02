@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { store } from "@/lib/server";
 import { createThreadAction } from "@/lib/actions";
 import RunConsole from "@/components/RunConsole";
@@ -21,11 +22,19 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
           <h1 className="text-xl font-bold">{agent.name}</h1>
           <div className="text-sm text-neutral-500 mt-1">{agent.model}</div>
         </div>
-        <form action={createThreadAction.bind(null, agent.id)}>
-          <button className="px-3 py-1.5 bg-neutral-100 text-neutral-900 rounded text-sm font-semibold hover:bg-white">
-            + new conversation
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/agents/${agent.id}/edit`}
+            className="px-3 py-1.5 border border-neutral-700 text-neutral-200 rounded text-sm font-semibold hover:bg-neutral-800"
+          >
+            edit
+          </Link>
+          <form action={createThreadAction.bind(null, agent.id)}>
+            <button className="px-3 py-1.5 bg-neutral-100 text-neutral-900 rounded text-sm font-semibold hover:bg-white">
+              + new conversation
+            </button>
+          </form>
+        </div>
       </div>
 
       <details className="mb-6 text-sm">

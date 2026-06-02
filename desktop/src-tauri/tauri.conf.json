@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "agentkit",
+        "title": "Pumkin",
         "width": 1200,
         "height": 800,
         "url": "http://127.0.0.1:3847",

@@ -25,6 +25,23 @@ export async function deleteAgentAction(id: string) {
   revalidatePath("/");
 }
 
+export async function updateAgentAction(id: string, formData: FormData) {
+  const builtInToolIds = formData.getAll("builtInToolIds").map(String).filter(Boolean);
+  const mcpServerIds = formData.getAll("mcpServerIds").map(String).filter(Boolean);
+  store().updateAgent(id, {
+    name: String(formData.get("name") ?? "").trim(),
+    model: String(formData.get("model") ?? "").trim(),
+    systemPrompt: String(formData.get("systemPrompt") ?? "").trim(),
+    builtInToolIds,
+    mcpServerIds,
+    maxSteps: Number(formData.get("maxSteps") ?? 10),
+    temperature: Number(formData.get("temperature") ?? 0.1),
+  });
+  revalidatePath("/");
+  revalidatePath(`/agents/${id}`);
+  redirect(`/agents/${id}`);
+}
+
 export async function createMcpServerAction(formData: FormData) {
   const transport = String(formData.get("transport") ?? "stdio") as "stdio" | "http";
   const requiresApproval = formData.get("requiresApproval") === "on";
