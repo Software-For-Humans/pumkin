@@ -11,6 +11,11 @@ dist/
 # Astro build cache
 .astro/
 
+# Vercel build output — must NOT be committed. If this dir is in the repo,
+# Vercel skips the real build and deploys stale function bundles → 500s
+# (ERR_MODULE_NOT_FOUND on all SSR routes + /api/*).
+.vercel/
+
 # Local secrets (never commit)
 pumkin-secrets.txt
 .env

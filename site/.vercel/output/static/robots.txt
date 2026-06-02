@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-
-# Keep transactional / API routes out of search
-Disallow: /api/
-Disallow: /thank-you
-
-Sitemap: https://pumkin.app/sitemap-index.xml
