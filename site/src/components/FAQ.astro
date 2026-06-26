@@ -1,12 +1,12 @@
 ---
 const faqs = [
   {
-    q: "Why pay for this when LM Studio and AnythingLLM are free?",
-    a: "Different problem. LM Studio is a model runner — it lets you chat with a local model. AnythingLLM is a RAG product — it lets you ask questions over your documents. Pumkin is an agent IDE — it lets you build named agents with specific tools and audit every call they make. If you've tried wiring agents together by hand using the Ollama API + MCP servers, you know how much glue this saves. The $99 is for the saved weekend of building it yourself.",
+    q: "How is this different from LM Studio or AnythingLLM?",
+    a: "Different problem. LM Studio is a model runner — it lets you chat with a local model. AnythingLLM is a RAG product — it lets you ask questions over your documents. Pumkin is an agent IDE — it lets you build named agents with specific tools and audit every call they make. If you've tried wiring agents together by hand with the Ollama API and MCP servers, you know how much glue this saves.",
   },
   {
     q: "What do I need installed on my machine?",
-    a: "Just Ollama (free, from ollama.com). Pumkin's installer bundles Node.js and everything else. No Rust, no Visual Studio, no Python. Run the .exe, you're done.",
+    a: "Just Ollama (free, from ollama.com). Pumkin's installer bundles Node.js and everything else. No Rust, no Visual Studio, no Python. Run the installer, you're done.",
   },
   {
     q: "Is Pumkin open source?",
@@ -14,23 +14,23 @@ const faqs = [
   },
   {
     q: "Mac and Linux support?",
-    a: "Windows installer ships today. Mac and Linux are next — the Tauri shell is cross-platform; the bottleneck is getting the bundled-Node + code-signing story working on each platform. Founding license holders get all platforms when they ship, no upcharge.",
+    a: "Windows installer ships today. Mac and Linux are next — the Tauri shell is cross-platform; the bottleneck is the bundled-Node and code-signing story on each platform. They'll be free when they land, same as everything else.",
   },
   {
     q: "What if it doesn't work for me?",
-    a: "30-day refund, no questions, no forms. Email and you get your money back. If you're past 30 days and a major version update breaks your workflow, email anyway — I'm one person and I'll work it out with you.",
+    a: "Open an issue on GitHub or email me. I'm one person, but I read everything and I'll try to help. And because it's MIT-licensed, you can always dig into the source and fix it yourself — PRs welcome.",
   },
   {
     q: "What about updates?",
-    a: "Lifetime updates for all v0.x releases. v1.0 (when it ships) will likely be a paid upgrade for new buyers, but founding license holders get it free.",
+    a: "Updates are free, always. New releases land on GitHub — watch or star the repo to get notified. No paid upgrades, no version gating.",
   },
   {
-    q: "Why $99? Why a founding license cap?",
-    a: "Because I want to ship something real and not a Series-A pitch deck. 50 founding licenses at $99 funds the code-signing certs, the macOS/Linux build work, and a year of development. After 50, price goes up — probably to $149 or $199 — and I get to keep building based on actual user feedback rather than guessing.",
+    q: "Why is it free?",
+    a: "Because I'd rather have people actually using it than guard a small paywall. Pumkin is part of how Software For Humans builds in the open — free, MIT-licensed, and genuinely useful. If it saves you a weekend of wiring agents together, that's the point.",
   },
   {
     q: "Who built this?",
-    a: "An indie founder under Software For Humans, LLC, based in Virginia, USA. Track record of building, shipping, and supporting small tools. Not a venture-backed startup. Not a side project of a bigger company. Just one person who wanted this thing to exist.",
+    a: "An indie founder under Software For Humans, LLC, based in Virginia, USA. A track record of building, shipping, and supporting small tools. Not a venture-backed startup. Not a side project of a bigger company. Just one person who wanted this thing to exist.",
   },
 ];
 ---
