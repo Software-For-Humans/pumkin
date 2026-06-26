@@ -33,7 +33,7 @@ This SmartScreen warning appears because Pumkin isn't code-signed yet (a paid ce
 
 ## The download won't start
 
-- Grab the installer from the [releases page](https://github.com/zgpbts79ws-dev/pumkin/releases/latest) — it's under **Assets** on the latest release.
+- Grab the installer from the [releases page](https://github.com/Software-For-Humans/pumkin/releases/latest) — it's under **Assets** on the latest release.
 - If a download fails partway, just download it again.
 - Still stuck? Open an issue on GitHub or email **hi@pumkin.app**.
 
