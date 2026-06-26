@@ -1,6 +1,10 @@
-# agentkit
+# Pumkin
 
-Local-first platform for building and running AI agents against your own Ollama. No cloud inference, no API keys, no per-token cost. Built single-user for now; architected to grow into a sellable product.
+A local-first IDE for building and running AI agents against your own Ollama models. No cloud inference, no API keys, no per-token cost — everything runs on your machine.
+
+Free and open source under the [MIT license](LICENSE). Grab a build from [Releases](https://github.com/zgpbts79ws-dev/pumkin/releases/latest), or build from source below.
+
+> Heads up: the npm package and the SQLite database are still named `agentkit` internally — that rename is in progress and doesn't change how anything runs.
 
 ## Quickstart (web UI)
 
@@ -64,3 +68,11 @@ Models smaller than 8B (or earlier 7B variants like `qwen2.5-coder:7b`) often *i
 ## Status
 
 Runtime, MCP adapter, SQLite store, loader, CLI, and web UI complete and integration-tested. Next: distribution via Tauri; agent edit page; live model picker via Ollama's `/api/tags`; interactive approval UI.
+
+## Contributing
+
+Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues privately via [SECURITY.md](SECURITY.md), and please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## License
+
+[MIT](LICENSE) © 2026 Software For Humans, LLC.

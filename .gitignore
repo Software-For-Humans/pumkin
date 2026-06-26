@@ -23,3 +23,6 @@ pumkin-secrets.txt
 
 # SQLite sidecar files (WAL/SHM/journal)
 *.db-*
+
+# keep the example env template tracked
+!.env.example
