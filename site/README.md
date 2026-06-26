@@ -72,7 +72,7 @@ Grep the codebase for these markers and replace:
 
 - `STRIPE_URL` in `src/components/Buy.astro` — set to your real Stripe Payment Link
 - `REMAINING_OF_50` in `src/components/Buy.astro` — hand-edit as licenses sell
-- `https://github.com/zgpbts79ws-dev/agentkit` in `Hero.astro` and `Footer.astro` — update if repo gets renamed
+- `https://github.com/zgpbts79ws-dev/pumkin` in `Hero.astro` and `Footer.astro` — update if repo gets renamed
 - `hi@pumkin.app` in `Footer.astro` — set up the email forwarding rule on your domain
 - `https://pumkin.app` in `astro.config.mjs` — your actual domain
 - `/og.png` in `Layout.astro` — drop an OpenGraph share image at `public/og.png` (1200×630)

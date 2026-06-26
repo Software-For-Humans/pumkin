@@ -8,7 +8,7 @@ Pumkin ships as a single Windows installer — no dependencies to chase, the run
 
 ## 1. Download
 
-Head to the [releases page](https://github.com/zgpbts79ws-dev/agentkit/releases/latest) and download the latest installer. You'll get a file named like:
+Head to the [releases page](https://github.com/zgpbts79ws-dev/pumkin/releases/latest) and download the latest installer. You'll get a file named like:
 
 ```
 Pumkin_0.0.1_x64-setup.exe
