@@ -27,15 +27,15 @@ See [Install Ollama & models](/docs/installing-ollama/) for the RAM-to-model gui
 
 ## "Windows protected your PC" on launch
 
-This SmartScreen warning appears because Pumkin isn't code-signed yet (a paid certificate is on the roadmap). It's expected and harmless for the installer you got from your purchase link.
+This SmartScreen warning appears because Pumkin isn't code-signed yet (a paid certificate is on the roadmap). It's expected and harmless for the installer you downloaded from GitHub Releases.
 
 - Click **More info** → **Run anyway**.
 
-## The download link isn't working
+## The download won't start
 
-- The link is tied to your purchase — use the one from your **welcome email**.
-- If the file is gone, the same link re-downloads it.
-- Still stuck? Email **hi@pumkin.app** with the address you bought with and I'll resend.
+- Grab the installer from the [releases page](https://github.com/zgpbts79ws-dev/agentkit/releases/latest) — it's under **Assets** on the latest release.
+- If a download fails partway, just download it again.
+- Still stuck? Open an issue on GitHub or email **hi@pumkin.app**.
 
 ## The desktop shortcut icon looks generic
 
@@ -57,6 +57,6 @@ When you email support about a bug, mentioning what the run showed (or attaching
 
 ## Still stuck?
 
-Email **hi@pumkin.app**. One founder, real support — describe what you did, what you expected, and what happened, and I'll get back to you, usually within a day.
+Email **hi@pumkin.app**. One maintainer, real support — describe what you did, what you expected, and what happened, and I'll get back to you, usually within a day.
 
 More questions? See the [FAQ →](/docs/faq/)

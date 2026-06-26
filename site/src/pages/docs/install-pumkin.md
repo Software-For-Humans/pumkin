@@ -4,17 +4,17 @@ title: Install Pumkin
 description: Run the installer, get past SmartScreen, and launch Pumkin for the first time.
 ---
 
-After you buy Pumkin you get a download link by email (and on the confirmation page). It's a single Windows installer — no dependencies to chase, the runtime it needs is bundled in.
+Pumkin ships as a single Windows installer — no dependencies to chase, the runtime it needs is bundled in. It's free and open source; grab the latest build from GitHub Releases.
 
 ## 1. Download
 
-Click the download link from your welcome email. You'll get a file named like:
+Head to the [releases page](https://github.com/zgpbts79ws-dev/agentkit/releases/latest) and download the latest installer. You'll get a file named like:
 
 ```
 Pumkin_0.0.1_x64-setup.exe
 ```
 
-The link is tied to your purchase, so keep the email. If you ever lose the file, the same link re-downloads it — or email **hi@pumkin.app** with the address you bought with and I'll resend.
+Every release lists its installer under **Assets**. If a download fails partway, just grab it again.
 
 ## 2. Run the installer
 
@@ -29,7 +29,7 @@ To proceed:
 1. Click **More info**
 2. Click **Run anyway**
 
-> **Why the warning?** Code-signing certificates cost a few hundred dollars a year, and removing this prompt is on the roadmap funded by founding sales. Until then, the click-through is harmless. The installer you downloaded from your purchase link is the real thing.
+> **Why the warning?** Code-signing certificates cost a few hundred dollars a year, and removing this prompt is on the roadmap. Until then, the click-through is harmless. You can verify exactly what you're running — the full source is on GitHub.
 
 ## 3. First launch
 

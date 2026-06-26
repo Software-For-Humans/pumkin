@@ -5,12 +5,12 @@ import Footer from "../components/Footer.astro";
 
 export const prerender = true;
 
-const updated = "June 2, 2026";
+const updated = "June 26, 2026";
 ---
 
 <Layout
   title="Privacy Policy — Pumkin"
-  description="How Pumkin (Software For Humans) handles your data: what we collect, why, who processes it, and your rights."
+  description="How Pumkin (Software For Humans) handles your data: what little we collect, why, and your rights."
 >
   <Header />
   <main class="container legal">
@@ -20,8 +20,7 @@ const updated = "June 2, 2026";
     <p>
       Pumkin is a product of <strong>Software For Humans, LLC</strong>, operated by Lewis LaBrie
       ("we", "us"). This policy explains what personal data we collect when you visit
-      <a href="https://pumkin.app">pumkin.app</a> or buy a Pumkin license, why we collect it,
-      who processes it, and the rights you have over it. Questions:
+      <a href="https://pumkin.app">pumkin.app</a>, why, and the rights you have over it. Questions:
       <a href="mailto:hi@pumkin.app">hi@pumkin.app</a>.
     </p>
 
@@ -29,26 +28,15 @@ const updated = "June 2, 2026";
     <p>
       The Pumkin desktop app runs entirely on your machine. Your prompts, your models, your
       files, and your agent runs never reach us — there is no Pumkin cloud and no telemetry on
-      your agent activity. The only personal data we hold is what's needed to sell you a license
-      and deliver your download: your email, name, and payment confirmation.
+      your agent activity. Pumkin is free, so there's no purchase and no payment data. The only
+      personal data we ever hold is what you send us directly, such as a support email.
     </p>
 
     <h2>What we collect</h2>
     <ul>
       <li>
-        <strong>Purchase information.</strong> When you buy a license, we receive your email
-        address, name (if provided), and details of the transaction (amount, currency, a Stripe
-        payment/session reference, and your founding-member number). We do <em>not</em> receive
-        or store your full card number — payment card data is handled entirely by Stripe.
-      </li>
-      <li>
-        <strong>Download activity.</strong> We generate a unique download token tied to your
-        purchase and record how many times it's used, so we can deliver and re-deliver your
-        installer.
-      </li>
-      <li>
         <strong>Email correspondence.</strong> If you email us for support, we keep that
-        correspondence to help you.
+        correspondence so we can help you and follow up.
       </li>
       <li>
         <strong>Basic server logs.</strong> Our hosting provider may process standard technical
@@ -64,33 +52,28 @@ const updated = "June 2, 2026";
       <li>We do not sell or rent your personal data to anyone.</li>
     </ul>
 
+    <h2>Where the software is distributed</h2>
+    <p>
+      Pumkin is downloaded from <strong>GitHub Releases</strong>. When you download it, GitHub
+      processes your request under its own privacy terms; we don't receive your identity from those
+      downloads.
+    </p>
+
     <h2>Why we process it (legal bases)</h2>
     <p>
-      We process your purchase and download data to <strong>perform our contract</strong> with
-      you (selling and delivering the license). We process support emails and keep transaction
-      records under our <strong>legitimate interests</strong> in running the business and our
-      <strong>legal obligations</strong> (such as tax and accounting record-keeping).
+      We process support emails and keep that correspondence under our <strong>legitimate
+      interests</strong> in supporting the software, and we process basic server logs under our
+      legitimate interest in serving the site securely.
     </p>
 
     <h2>Who processes your data</h2>
-    <p>We use a small number of trusted service providers ("processors") to operate:</p>
     <ul>
-      <li><strong>Stripe</strong> — payment processing.</li>
-      <li><strong>Supabase</strong> — database storing your order record (hosted in the EU, Frankfurt region).</li>
-      <li><strong>Resend</strong> — sending your welcome/download email.</li>
       <li><strong>Vercel</strong> — website hosting.</li>
-      <li><strong>DigitalOcean</strong> — storage and delivery of the installer file.</li>
+      <li><strong>GitHub</strong> — hosting the source code and release downloads.</li>
     </ul>
     <p>
       Each operates under its own privacy terms. Some may process data outside your country; where
       that happens, appropriate safeguards (such as Standard Contractual Clauses) apply.
-    </p>
-
-    <h2>How long we keep it</h2>
-    <p>
-      We keep your order record for as long as you hold a license and as long as required for
-      legal and accounting purposes, then delete or anonymize it. You can ask us to delete your
-      data sooner (subject to record-keeping obligations) — see below.
     </p>
 
     <h2>Your rights</h2>

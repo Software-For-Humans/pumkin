@@ -12,13 +12,13 @@ No. Pumkin runs locally, talks to Ollama locally, and stores everything in a loc
 
 Only to download Pumkin, install Ollama, and pull models. Once a model is on your machine, agents run fully offline.
 
-## What does the license cover?
+## What does it cost?
 
-A founding license is a one-time $99 purchase for **lifetime updates on every platform**. Windows ships first; macOS and Linux builds are included free when they land. You also get the source code for personal use and audit.
+Nothing. Pumkin is free and open source under the MIT license. Download it, use it, read the source, modify it, even ship your own version. No license key, no account, no paid tier.
 
 ## Why is there a SmartScreen warning?
 
-Pumkin isn't code-signed with a paid certificate yet, so Windows shows an "unknown publisher" prompt. Click **More info → Run anyway**. Signing is on the roadmap, funded by founding sales. See [Install Pumkin](/docs/install-pumkin/).
+Pumkin isn't code-signed with a paid certificate yet, so Windows shows an "unknown publisher" prompt. Click **More info → Run anyway**. Code-signing is on the roadmap. See [Install Pumkin](/docs/install-pumkin/).
 
 ## What hardware do I need?
 
@@ -36,16 +36,12 @@ Yes. Pumkin uses MCP (Model Context Protocol), an open standard. Any MCP server 
 
 Only if you let it. Pumkin has an approval flow: you can require an agent to ask before running any tool, showing you the exact call and arguments first. Keep approvals on for anything that touches your system until you trust it. See [MCP tools](/docs/mcp-tools/).
 
-## Is there a refund?
-
-Yes — 30 days, no questions asked. Email **hi@pumkin.app**.
-
 ## When do macOS and Linux ship?
 
-They're on the roadmap and included in your license. No firm date yet — founding sales fund the build work. Buy now and you get them free when they're ready.
+They're on the roadmap. No firm date yet — the Tauri shell is cross-platform, but the bundled-Node and code-signing story needs work on each platform. They'll be free when they land, same as everything else.
 
 ## How do I get support?
 
-Email **hi@pumkin.app**. One founder, real answers, usually within a day. Describe what you did, what you expected, and what happened.
+Open an issue on GitHub, or email **hi@pumkin.app**. One maintainer, real answers, usually within a day. Describe what you did, what you expected, and what happened.
 
 Back to [Overview →](/docs/)
