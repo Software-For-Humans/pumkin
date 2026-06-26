@@ -20,3 +20,6 @@ dist/
 pumkin-secrets.txt
 .env
 .env.local
+
+# SQLite sidecar files (WAL/SHM/journal)
+*.db-*
